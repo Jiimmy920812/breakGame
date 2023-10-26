@@ -1,4 +1,4 @@
-import { _decorator, Component, Collider2D,Contact2DType,PhysicsSystem2D,IPhysics2DContact,RigidBody2D,Vec2, Sprite  } from 'cc';
+import { _decorator, Component, Collider2D,Contact2DType,PhysicsSystem2D,IPhysics2DContact,RigidBody2D,Vec2, Sprite, director, Director  } from 'cc';
 const { ccclass, property } = _decorator;
 
 
@@ -26,7 +26,9 @@ export class Ball extends Component {
     }
     onBeginContact (selfCollider: Collider2D, otherCollider: Collider2D, contact: IPhysics2DContact | null) {
         if (otherCollider.tag === 1) {
-            otherCollider.getComponent(Sprite).destroy()
+           director.once(Director.EVENT_AFTER_PHYSICS,()=>{
+             otherCollider.node.destroy()
+           }) 
         }
     }
    
