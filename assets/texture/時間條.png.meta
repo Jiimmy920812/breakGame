@@ -2,7 +2,7 @@
   "ver": "1.0.26",
   "importer": "image",
   "imported": true,
-  "uuid": "fb84f556-5680-4dcf-8fde-1a1c9ac0fb54",
+  "uuid": "be386f97-c953-4f83-bfba-bb3ab4ed9102",
   "files": [
     ".json",
     ".png"
@@ -10,14 +10,14 @@
   "subMetas": {
     "6c48a": {
       "importer": "texture",
-      "uuid": "fb84f556-5680-4dcf-8fde-1a1c9ac0fb54@6c48a",
-      "displayName": "prize",
+      "uuid": "be386f97-c953-4f83-bfba-bb3ab4ed9102@6c48a",
+      "displayName": "時間條",
       "id": "6c48a",
       "name": "texture",
       "userData": {
         "wrapModeS": "clamp-to-edge",
         "wrapModeT": "clamp-to-edge",
-        "imageUuidOrDatabaseUri": "fb84f556-5680-4dcf-8fde-1a1c9ac0fb54",
+        "imageUuidOrDatabaseUri": "be386f97-c953-4f83-bfba-bb3ab4ed9102",
         "isUuid": true,
         "visible": false,
         "minfilter": "linear",
@@ -34,8 +34,8 @@
     },
     "f9941": {
       "importer": "sprite-frame",
-      "uuid": "fb84f556-5680-4dcf-8fde-1a1c9ac0fb54@f9941",
-      "displayName": "prize",
+      "uuid": "be386f97-c953-4f83-bfba-bb3ab4ed9102@f9941",
+      "displayName": "時間條",
       "id": "f9941",
       "name": "spriteFrame",
       "userData": {
@@ -46,10 +46,10 @@
         "offsetY": 0,
         "trimX": 0,
         "trimY": 0,
-        "width": 40,
-        "height": 30,
-        "rawWidth": 40,
-        "rawHeight": 30,
+        "width": 375,
+        "height": 40,
+        "rawWidth": 375,
+        "rawHeight": 40,
         "borderTop": 0,
         "borderBottom": 0,
         "borderLeft": 0,
@@ -61,17 +61,17 @@
         "meshType": 0,
         "vertices": {
           "rawPosition": [
+            -187.5,
             -20,
-            -15,
             0,
-            20,
-            -15,
-            0,
+            187.5,
             -20,
-            15,
             0,
+            -187.5,
             20,
-            15,
+            0,
+            187.5,
+            20,
             0
           ],
           "indexes": [
@@ -84,12 +84,12 @@
           ],
           "uv": [
             0,
-            30,
             40,
-            30,
+            375,
+            40,
             0,
             0,
-            40,
+            375,
             0
           ],
           "nuv": [
@@ -103,18 +103,18 @@
             1
           ],
           "minPos": [
+            -187.5,
             -20,
-            -15,
             0
           ],
           "maxPos": [
+            187.5,
             20,
-            15,
             0
           ]
         },
         "isUuid": true,
-        "imageUuidOrDatabaseUri": "fb84f556-5680-4dcf-8fde-1a1c9ac0fb54@6c48a",
+        "imageUuidOrDatabaseUri": "be386f97-c953-4f83-bfba-bb3ab4ed9102@6c48a",
         "atlasUuid": ""
       },
       "ver": "1.0.12",
@@ -129,6 +129,6 @@
     "type": "sprite-frame",
     "fixAlphaTransparencyArtifacts": true,
     "hasAlpha": true,
-    "redirect": "fb84f556-5680-4dcf-8fde-1a1c9ac0fb54@f9941"
+    "redirect": "be386f97-c953-4f83-bfba-bb3ab4ed9102@f9941"
   }
 }
