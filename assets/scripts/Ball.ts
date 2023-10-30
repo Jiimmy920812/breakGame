@@ -1,7 +1,6 @@
-import { _decorator, Component, Collider2D,Contact2DType,PhysicsSystem2D,IPhysics2DContact,RigidBody2D,Vec2, Sprite, director, Director  } from 'cc';
+import { _decorator, Component, Collider2D,Contact2DType,PhysicsSystem2D,IPhysics2DContact,RigidBody2D,Vec2, director, Director } from 'cc';
 const { ccclass, property } = _decorator;
-
-
+import { GameControl } from './GameControl';
 
 @ccclass('Ball')
 export class Ball extends Component {
@@ -9,10 +8,17 @@ export class Ball extends Component {
     private speed :number = 10;
 
     start () {
+        const gameControl = new GameControl();
+        gameControl.eventTarget.on('gameStart', (startGame: boolean) => {
+            if (startGame) {
+                this.startPlay();
+            }
+        }, this);
+    }
+    startPlay(){
         let RigidBody = this.node.getComponent(RigidBody2D)
         let newVelocity = new Vec2(this.speed, this.speed); 
         RigidBody.linearVelocity = newVelocity;
-      
         
         // 注册单个碰撞体的回调函数
         let collider = this.getComponent(Collider2D);
@@ -24,12 +30,21 @@ export class Ball extends Component {
             PhysicsSystem2D.instance.on(Contact2DType.BEGIN_CONTACT, this.onBeginContact, this);
         }
     }
+
     onBeginContact (selfCollider: Collider2D, otherCollider: Collider2D, contact: IPhysics2DContact | null) {
         if (otherCollider.tag === 1) {
            director.once(Director.EVENT_AFTER_PHYSICS,()=>{
              otherCollider.node.destroy()
            }) 
         }
+        if (otherCollider.tag === 6) {
+            director.once(Director.EVENT_AFTER_PHYSICS,()=>{
+                otherCollider.node.destroy()
+              }) 
+            console.log('中獎了');
+        }
+
+
     }
    
 }

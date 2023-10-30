@@ -1,4 +1,4 @@
-import { _decorator, Component, Node, Button, Vec3 ,UITransform} from 'cc';
+import { _decorator, Component, Node, Button, Vec3 ,UITransform,EventTarget} from 'cc';
 
 const { ccclass, property } = _decorator;
 
@@ -8,15 +8,25 @@ export class GameControl extends Component {
     private paddle: Node | null = null;
     private splace:number = 50;
 
-    
+    @property(Button)
+    private BgBtn: Button | null = null;
+   
+    @property({ type: Node })
+    private startNode: any = null
+    public  static startGame:boolean = false
+    public eventTarget: EventTarget = new EventTarget();
+
     @property(Button)
     private leftButton: Button | null = null;
 
     @property(Button)
     private rightButton: Button | null = null;
 
-    start() {
-
+    
+    onLoad() {
+        if (this.BgBtn) {
+                    this.BgBtn.node.on('click', this.startPlay, this);
+                }
         if (this.leftButton) {
             this.leftButton.node.on('click', this.onLeftButtonClick, this);
         }
@@ -24,7 +34,13 @@ export class GameControl extends Component {
             this.rightButton.node.on('click', this.onRightButtonClick, this);
         }
     }
-
+    startPlay(){
+        if (this.startNode) {
+                    this.startNode.active = false;
+                    GameControl.startGame = true;
+                    this.eventTarget.emit('gameStart',GameControl.startGame);
+        }
+    }
     onLeftButtonClick() {
             const transform = this.getComponent(UITransform);
             const canvasWidth = transform.width

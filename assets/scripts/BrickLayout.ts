@@ -1,4 +1,4 @@
-import { _decorator, Component, instantiate, Node, Prefab,SpriteFrame,SpriteComponent,UITransform } from 'cc';
+import { _decorator, Component, instantiate, Node, Prefab,SpriteFrame,SpriteComponent,UITransform,Collider2D } from 'cc';
 const { ccclass, property } = _decorator;
 
 @ccclass('BrickLayout')
@@ -17,8 +17,7 @@ export class BrickLayout extends Component {
     @property({type: SpriteFrame})
     PrizeTexture: SpriteFrame|null = null;
 
-    private brickCondition: boolean = false;
-
+    
 
     onLoad() {
         this.generateRectArray();
@@ -54,7 +53,7 @@ export class BrickLayout extends Component {
             const transform = rectNode.getComponent(UITransform);
             const xPos = col * transform.width;
             const yPos = row * transform.height;
-            rectNode.setPosition(xPos, yPos);
+            rectNode.setPosition(xPos, yPos,);
             
     
             // 將矩形節點添加到父節點
@@ -62,10 +61,18 @@ export class BrickLayout extends Component {
     
             // 获取Sprite组件
             const sprite = rectNode.getComponent(SpriteComponent);
-    
             if (sprite) {
                 // 根据索引设置不同的纹理
-                sprite.spriteFrame = i === prizeTextureIndex ? this.PrizeTexture : this.BrickTexture;
+                if (i === prizeTextureIndex) {
+                    sprite.spriteFrame = this.PrizeTexture;
+                    // 设置Collider2D的tag为6
+                    const collider = rectNode.getComponent(Collider2D);
+                    if (collider) {
+                        collider.tag = 6;
+                    }
+                } else {
+                    sprite.spriteFrame = this.BrickTexture;
+                }
             }
         }
     }
