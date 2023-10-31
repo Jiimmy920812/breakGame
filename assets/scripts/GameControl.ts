@@ -1,20 +1,16 @@
-import { _decorator, Component, Node, Button, Vec3 ,UITransform,EventTarget} from 'cc';
+import { _decorator, Component, Node, Button, Vec3 ,UITransform, Label} from 'cc';
+import { Ball } from './Ball'
+import {BrickLayout} from './BrickLayout'
 
 const { ccclass, property } = _decorator;
 
 @ccclass('GameControl')
 export class GameControl extends Component {
-    @property(Node)
-    private paddle: Node | null = null;
-    private splace:number = 50;
+  
 
     @property(Button)
     private BgBtn: Button | null = null;
    
-    @property({ type: Node })
-    private startNode: any = null
-    public  static startGame:boolean = false
-    public eventTarget: EventTarget = new EventTarget();
 
     @property(Button)
     private leftButton: Button | null = null;
@@ -22,10 +18,33 @@ export class GameControl extends Component {
     @property(Button)
     private rightButton: Button | null = null;
 
+
+    @property(Node)
+    private ball: Node | null = null;
+
+    @property(Node)
+    private paddle: Node | null = null;
+    private splace:number = 50;
+
+    @property(Node)
+    private BrickLayout: Node | null = null;
+
+    @property(Node)
+    private OverPanel: Node | null = null;
+
+    @property(Node)
+    private startPanel: Node | null = null;
+
+    @property(Node)
+    private grayBg: Node | null = null;
+
+    @property(Node)
+    private countDown: Node | null = null;
+
     
     onLoad() {
         if (this.BgBtn) {
-                    this.BgBtn.node.on('click', this.startPlay, this);
+                    this.BgBtn.node.on('click', this.closeStartPanel, this);
                 }
         if (this.leftButton) {
             this.leftButton.node.on('click', this.onLeftButtonClick, this);
@@ -34,13 +53,30 @@ export class GameControl extends Component {
             this.rightButton.node.on('click', this.onRightButtonClick, this);
         }
     }
-    startPlay(){
-        if (this.startNode) {
-                    this.startNode.active = false;
-                    GameControl.startGame = true;
-                    this.eventTarget.emit('gameStart',GameControl.startGame);
-        }
+    closeStartPanel(){
+       this.startPanel.active = false
+       this.startPlay()
     }
+
+    startPlay(){
+        const ball = this.ball.getComponent(Ball)
+        const layout = this.BrickLayout.getComponent(BrickLayout)
+        const countDownNum = this.countDown.getComponent(Label);
+        let count = parseInt(countDownNum.string);
+        const timer = setInterval(() => {
+            if (count > 1) {
+              count--;
+              countDownNum.string = count.toString();
+            } else {
+              clearInterval(timer); // 清除定时器
+              this.countDown.active = false
+              this.grayBg.active = false
+              layout.generateRectArray()
+              ball.startPlay()
+            }
+          }, 1000);
+        }
+        
     onLeftButtonClick() {
             const transform = this.getComponent(UITransform);
             const canvasWidth = transform.width

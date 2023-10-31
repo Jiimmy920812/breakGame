@@ -18,9 +18,8 @@ export class BrickLayout extends Component {
     PrizeTexture: SpriteFrame|null = null;
 
     
-
     onLoad() {
-        this.generateRectArray();
+      
     }
 
     generateRectArray() {

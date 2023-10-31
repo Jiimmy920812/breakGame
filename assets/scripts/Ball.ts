@@ -1,19 +1,15 @@
-import { _decorator, Component, Collider2D,Contact2DType,PhysicsSystem2D,IPhysics2DContact,RigidBody2D,Vec2, director, Director } from 'cc';
+import { _decorator, Component, Collider2D,Contact2DType,PhysicsSystem2D,IPhysics2DContact,RigidBody2D,Vec2, director, Director,Node, } from 'cc';
 const { ccclass, property } = _decorator;
-import { GameControl } from './GameControl';
 
 @ccclass('Ball')
 export class Ball extends Component {
 
     private speed :number = 10;
+   
+   
 
     start () {
-        const gameControl = new GameControl();
-        gameControl.eventTarget.on('gameStart', (startGame: boolean) => {
-            if (startGame) {
-                this.startPlay();
-            }
-        }, this);
+      
     }
     startPlay(){
         let RigidBody = this.node.getComponent(RigidBody2D)
