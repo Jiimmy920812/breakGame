@@ -1,4 +1,4 @@
-import { _decorator, Component, Node, Button, Vec3 ,UITransform, Label, PhysicsSystem2D} from 'cc';
+import { _decorator, Component, Node, Button, Vec3 ,UITransform, Label, PhysicsSystem2D,Input,SpriteFrame,SpriteComponent} from 'cc';
 import { Ball } from './Ball'
 import {BrickLayout} from './BrickLayout'
 
@@ -8,8 +8,8 @@ const { ccclass, property } = _decorator;
 export class GameControl extends Component {
   
 
-    @property(Button)
-    private BgBtn: Button | null = null;
+    @property(Node)
+    private touchBg:Node = null;
    
 
     @property(Button)
@@ -43,33 +43,47 @@ export class GameControl extends Component {
 
     @property(Node)
     private countDown: Node | null = null;
+    @property({type: SpriteFrame})
+    num_2: SpriteFrame|null = null;
+
+    @property({type: SpriteFrame})
+    num_1: SpriteFrame|null = null;
+
 
 
     @property(Node)
     private timeBar: Node | null = null;
-    public barUnit:number = 0
+    private timeBarX:number = -150 ;
+    private timeBarY:number = 7.7 ;
+    public barUnit:number = 0 ; 
     
 
     @property(Node)
     private timeBarNum: Node | null = null;
+    private min: number = 1;
+    private sec: number = 0;
 
 
     
     onLoad() {
         //取得倒數記數
-        const timeBarNum60 =  this.timeBarNum.getComponent(Label)
-        let count = parseInt(timeBarNum60.string)
-        //取得容器寬
-        const transform = this.getComponent(UITransform);
-        this.barUnit = transform.width/count
+        const timeNum =  this.timeBarNum.getComponent(Label)
+        this.sec =  this.min *60
+        timeNum.string = `01:00`;
+      
+
+        const timeBar = this.timeBar.getComponent(UITransform);
+        this.barUnit = timeBar.width/this.sec 
+        console.log(this.barUnit,'unit');
+        
 
         //初始長條
         this.timeBar.getComponent(UITransform).width = this.barUnit
-       
+        this.timeBar.position = new Vec3(this.timeBarX, this.timeBarY, 0);
        
         PhysicsSystem2D.instance.enable = true;
-        if (this.BgBtn) {
-                    this.BgBtn.node.on('click', this.closeStartPanel, this);
+        if (this.touchBg) {
+            this.touchBg.on(Input.EventType.TOUCH_START, this.closeStartPanel, this);   
                 }
         if (this.leftBtn) {
             this.leftBtn.node.on('click', this.onLeftButtonClick, this);
@@ -83,18 +97,24 @@ export class GameControl extends Component {
     }
     closeStartPanel(){
        this.startPanel.active = false
+       this.touchBg.active=false
        this.startPlay()
     }
 
     startPlay(){
         const ball = this.ball.getComponent(Ball)
         const layout = this.BrickLayout.getComponent(BrickLayout)
-        const countDownNum = this.countDown.getComponent(Label);
-        let count = parseInt(countDownNum.string);
+        const sprite = this.countDown.getComponent(SpriteComponent);
+        let count = 3
         const timer = setInterval(() => {
             if (count > 1) {
               count--;
-              countDownNum.string = count.toString();
+              if (count===2) {
+                sprite.spriteFrame = this.num_2
+              }
+              if (count===1) {
+                sprite.spriteFrame = this.num_1
+              }
             } else {
               clearInterval(timer); // 清除定时器
               this.countDown.active = false
@@ -108,14 +128,20 @@ export class GameControl extends Component {
 
     gameCountDown(){
        //取得倒數記數
-        const timeBarNum60 =  this.timeBarNum.getComponent(Label)
-        let count = parseInt(timeBarNum60.string)
-       
+        const timeNum =  this.timeBarNum.getComponent(Label)
+        
         const timer = setInterval(() => {
-            if (count > 1&& PhysicsSystem2D.instance.enable) {
-              count--;
-              timeBarNum60.string = count.toString();
-              this.timeBar.getComponent(UITransform).width = this.timeBar.getComponent(UITransform).width + this.barUnit*2
+            if (this.sec > 1&& PhysicsSystem2D.instance.enable) {
+              this.sec--;
+            if (this.sec<10) {
+                timeNum.string = `00:0${this.sec}`;
+            }else{
+                timeNum.string = `00:${this.sec}`;
+            }
+              this.timeBarX = this.timeBarX + this.barUnit/2
+              this.timeBar.position = new Vec3(this.timeBarX, this.timeBarY, 0);
+              console.log(this.timeBar.position,'位置');
+              this.timeBar.getComponent(UITransform).width = this.timeBar.getComponent(UITransform).width + this.barUnit
             } else {
               clearInterval(timer); // 清除定时器
              console.log('你輸了');
@@ -131,10 +157,9 @@ export class GameControl extends Component {
     }
 
     onLeftButtonClick() {
-            const transform = this.getComponent(UITransform);
-            const canvasWidth = transform.width
-            const paddleWidth = this.paddle.getComponent(UITransform).width
-
+        const transform = this.getComponent(UITransform);
+        const canvasWidth = transform.width
+        const paddleWidth = this.paddle.getComponent(UITransform).width
         // 处理左按钮点击事件，将滑板向左移动
         const currentPosition = this.paddle.position;
         const borderMin =  -(canvasWidth/2 - paddleWidth/2)
