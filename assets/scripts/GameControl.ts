@@ -1,6 +1,7 @@
 import { _decorator, Component, Node, Button, Vec3 ,UITransform, Label, PhysicsSystem2D,Input,SpriteFrame,SpriteComponent} from 'cc';
 import { Ball } from './Ball'
 import {BrickLayout} from './BrickLayout'
+import {OverPanel} from './OverPanel'
 
 const { ccclass, property } = _decorator;
 
@@ -8,8 +9,7 @@ const { ccclass, property } = _decorator;
 export class GameControl extends Component {
   
 
-    @property(Node)
-    private touchBg:Node = null;
+
    
 
     @property(Button)
@@ -32,9 +32,12 @@ export class GameControl extends Component {
     @property(Node)
     private BrickLayout: Node | null = null;
 
+
     @property(Node)
     private OverPanel: Node | null = null;
 
+    @property(Node)
+    private touchStartBg:Node = null;
     @property(Node)
     private startPanel: Node | null = null;
 
@@ -71,36 +74,37 @@ export class GameControl extends Component {
         this.sec =  this.min *60
         timeNum.string = `01:00`;
       
-
         const timeBar = this.timeBar.getComponent(UITransform);
         this.barUnit = timeBar.width/this.sec 
-        console.log(this.barUnit,'unit');
         
-
         //初始長條
         this.timeBar.getComponent(UITransform).width = this.barUnit
         this.timeBar.position = new Vec3(this.timeBarX, this.timeBarY, 0);
-       
         PhysicsSystem2D.instance.enable = true;
-        if (this.touchBg) {
-            this.touchBg.on(Input.EventType.TOUCH_START, this.closeStartPanel, this);   
+
+       
+        //起始面板點擊
+        if (this.touchStartBg) {
+            this.touchStartBg.on(Input.EventType.TOUCH_START, this.closeStartPanel, this);   
                 }
+        //方向控制
         if (this.leftBtn) {
             this.leftBtn.node.on('click', this.onLeftButtonClick, this);
         }
         if (this.rightBtn) {
             this.rightBtn.node.on('click', this.onRightButtonClick, this);
         }
+        //暫停控制
         if (this.pauseBtn) {
             this.pauseBtn.node.on('click', this.pauseGame, this);
         }
     }
     closeStartPanel(){
        this.startPanel.active = false
-       this.touchBg.active=false
+       this.touchStartBg.active=false
        this.startPlay()
     }
-
+    
     startPlay(){
         const ball = this.ball.getComponent(Ball)
         const layout = this.BrickLayout.getComponent(BrickLayout)
@@ -125,13 +129,13 @@ export class GameControl extends Component {
             }
           }, 1000);
         }
-
     gameCountDown(){
        //取得倒數記數
         const timeNum =  this.timeBarNum.getComponent(Label)
         
+        const panel = this.OverPanel.getComponent(OverPanel)
         const timer = setInterval(() => {
-            if (this.sec > 1&& PhysicsSystem2D.instance.enable) {
+            if (this.sec > 0&& PhysicsSystem2D.instance.enable) {
               this.sec--;
             if (this.sec<10) {
                 timeNum.string = `00:0${this.sec}`;
@@ -140,11 +144,11 @@ export class GameControl extends Component {
             }
               this.timeBarX = this.timeBarX + this.barUnit/2
               this.timeBar.position = new Vec3(this.timeBarX, this.timeBarY, 0);
-              console.log(this.timeBar.position,'位置');
               this.timeBar.getComponent(UITransform).width = this.timeBar.getComponent(UITransform).width + this.barUnit
-            } else {
+            }if (this.sec===0) {
               clearInterval(timer); // 清除定时器
-             console.log('你輸了');
+              panel.result = false
+              panel.playResult()
             }
           }, 1000);
         }

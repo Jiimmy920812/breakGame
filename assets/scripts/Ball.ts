@@ -1,12 +1,15 @@
 import { _decorator, Component, Collider2D,Contact2DType,PhysicsSystem2D,IPhysics2DContact,RigidBody2D,Vec2, director, Director,Node, } from 'cc';
+import {OverPanel} from './OverPanel'
 const { ccclass, property } = _decorator;
 
 @ccclass('Ball')
 export class Ball extends Component {
 
-    private speed :number = 10;
+    private speed :number =10;
    
-   
+    @property(Node)
+    private OverPanel: Node | null = null;
+
 
     start () {
       
@@ -28,16 +31,25 @@ export class Ball extends Component {
     }
 
     onBeginContact (selfCollider: Collider2D, otherCollider: Collider2D, contact: IPhysics2DContact | null) {
+        const panel = this.OverPanel.getComponent(OverPanel)
+        //一般磚
         if (otherCollider.tag === 1) {
            director.once(Director.EVENT_AFTER_PHYSICS,()=>{
              otherCollider.node.destroy()
            }) 
         }
+        //地板
+        if (otherCollider.tag === 2) {
+            panel.result = false
+            panel.playResult()
+         }
+        //特殊磚
         if (otherCollider.tag === 6) {
             director.once(Director.EVENT_AFTER_PHYSICS,()=>{
                 otherCollider.node.destroy()
               }) 
-            console.log('中獎了');
+            panel.result = true
+            panel.playResult()
         }
 
 
