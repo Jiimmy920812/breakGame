@@ -1,4 +1,4 @@
-import { _decorator, Component, Node, Button, Vec3 ,UITransform, Label, PhysicsSystem2D,Input,SpriteFrame,SpriteComponent} from 'cc';
+import { _decorator, Component, Node, Button, Vec3 ,UITransform, Label, PhysicsSystem2D,Input,SpriteFrame,SpriteComponent,find} from 'cc';
 import { Ball } from './Ball'
 import {BrickLayout} from './BrickLayout'
 import {OverPanel} from './OverPanel'
@@ -59,7 +59,7 @@ export class GameControl extends Component {
     private timeBarX:number = -150 ;
     private timeBarY:number = 7.7 ;
     public barUnit:number = 0 ; 
-    
+    public timer = null;
 
     @property(Node)
     private timeBarNum: Node | null = null;
@@ -76,11 +76,13 @@ export class GameControl extends Component {
       
         const timeBar = this.timeBar.getComponent(UITransform);
         this.barUnit = timeBar.width/this.sec 
-        
+
+
         //初始長條
+        PhysicsSystem2D.instance.enable = true;
         this.timeBar.getComponent(UITransform).width = this.barUnit
         this.timeBar.position = new Vec3(this.timeBarX, this.timeBarY, 0);
-        PhysicsSystem2D.instance.enable = true;
+    
 
        
         //起始面板點擊
@@ -110,7 +112,7 @@ export class GameControl extends Component {
         const layout = this.BrickLayout.getComponent(BrickLayout)
         const sprite = this.countDown.getComponent(SpriteComponent);
         let count = 3
-        const timer = setInterval(() => {
+        const timer  = setInterval(() => {
             if (count > 1) {
               count--;
               if (count===2) {
@@ -132,10 +134,13 @@ export class GameControl extends Component {
     gameCountDown(){
        //取得倒數記數
         const timeNum =  this.timeBarNum.getComponent(Label)
-        
         const panel = this.OverPanel.getComponent(OverPanel)
-        const timer = setInterval(() => {
-            if (this.sec > 0&& PhysicsSystem2D.instance.enable) {
+ 
+        this.timer = setInterval(() => {
+          this.timeBar = find("Canvas/TimeBar/time")
+          console.log(this.timeBar,'111111111111111111111111111111'); 
+          
+          if (this.sec > 0&& PhysicsSystem2D.instance.enable) {
               this.sec--;
             if (this.sec<10) {
                 timeNum.string = `00:0${this.sec}`;
@@ -143,10 +148,12 @@ export class GameControl extends Component {
                 timeNum.string = `00:${this.sec}`;
             }
               this.timeBarX = this.timeBarX + this.barUnit/2
+              console.log(this.timeBar,'2222222222222222222');
+              console.log(this.timeBarX,this.timeBarY);
               this.timeBar.position = new Vec3(this.timeBarX, this.timeBarY, 0);
               this.timeBar.getComponent(UITransform).width = this.timeBar.getComponent(UITransform).width + this.barUnit
             }if (this.sec===0) {
-              clearInterval(timer); // 清除定时器
+              clearInterval(this.timer); // 清除定时器
               panel.result = false
               panel.playResult()
             }
