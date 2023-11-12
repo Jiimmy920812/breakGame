@@ -33,7 +33,6 @@ export class OverPanel extends Component {
         this.grayBg.active = true  
         this.OverPanel.active = true
         this.touchOverBg.active = true
-        console.log( this.gameClt,'gameClt');
         const gameClt = this.gameClt.getComponent(GameControl)
         const animate = this.node.getComponent(Animation);
         const bg = this.OverPanel.getChildByName("Bg")
