@@ -69,22 +69,6 @@ export class GameControl extends Component {
 
     
     onLoad() {
-        //取得倒數記數
-        const timeNum =  this.timeBarNum.getComponent(Label)
-        this.sec =  this.min *60
-        timeNum.string = `01:00`;
-      
-        const timeBar = this.timeBar.getComponent(UITransform);
-        this.barUnit = timeBar.width/this.sec 
-
-
-        //初始長條
-        PhysicsSystem2D.instance.enable = true;
-        this.timeBar.getComponent(UITransform).width = this.barUnit
-        this.timeBar.position = new Vec3(this.timeBarX, this.timeBarY, 0);
-    
-
-       
         //起始面板點擊
         if (this.touchStartBg) {
             this.touchStartBg.on(Input.EventType.TOUCH_START, this.closeStartPanel, this);   
@@ -100,6 +84,24 @@ export class GameControl extends Component {
         if (this.pauseBtn) {
             this.pauseBtn.node.on('click', this.pauseGame, this);
         }
+        this.init()
+    }
+    init(){
+        //取得倒數記數
+        const timeNum =  this.timeBarNum.getComponent(Label)
+        this.sec =  this.min *60
+        timeNum.string = `01:00`;
+
+        const timeBar = this.timeBar.getComponent(UITransform);
+        this.barUnit = timeBar.width/this.sec 
+
+        //初始長條
+        clearInterval(this.timer); // 清除定时器
+        this.timeBarX = -150
+        this.timeBarY = 7.7
+        PhysicsSystem2D.instance.enable = true;
+        this.timeBar.getComponent(UITransform).width = this.barUnit
+        this.timeBar.position = new Vec3(this.timeBarX, this.timeBarY, 0);
     }
     closeStartPanel(){
        this.startPanel.active = false
@@ -137,9 +139,7 @@ export class GameControl extends Component {
         const panel = this.OverPanel.getComponent(OverPanel)
  
         this.timer = setInterval(() => {
-          this.timeBar = find("Canvas/TimeBar/time")
           console.log(this.timeBar,'111111111111111111111111111111'); 
-          
           if (this.sec > 0&& PhysicsSystem2D.instance.enable) {
               this.sec--;
             if (this.sec<10) {
