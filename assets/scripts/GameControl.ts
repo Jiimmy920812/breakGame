@@ -1,4 +1,4 @@
-import { _decorator, Component, Node, Button, Vec3 ,UITransform, Label, PhysicsSystem2D,Input,Director} from 'cc';
+import { _decorator, Component, Node, Button, Vec3 ,UITransform, PhysicsSystem2D,Input} from 'cc';
 import { Ball } from './Ball'
 import {BrickLayout} from './BrickLayout'
 import {OverPanel} from './OverPanel'
@@ -15,11 +15,6 @@ export class GameControl extends Component {
 
     public init :boolean = true
 
-    @property(Button)
-    private leftBtn: Button | null = null;
-
-    @property(Button)
-    private rightBtn: Button | null = null;
 
     @property(Button)
     private pauseBtn: Button | null = null;
@@ -30,7 +25,6 @@ export class GameControl extends Component {
 
     @property(Node)
     private paddle: Node | null = null;
-    private splace:number = 50;
 
     @property(Node)
     private BrickLayout: Node | null = null;
