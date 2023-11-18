@@ -61,13 +61,9 @@ export class GameControl extends Component {
         if (this.touchStartBg) {
             this.touchStartBg.on(Input.EventType.TOUCH_START, this.closeStartPanel, this);   
                 }
-        //方向控制
-        if (this.leftBtn) {
-            this.leftBtn.node.on('click', this.onLeftButtonClick, this);
-        }
-        if (this.rightBtn) {
-            this.rightBtn.node.on('click', this.onRightButtonClick, this);
-        }
+        //手指操控
+        this.node.on(Input.EventType.TOUCH_MOVE,this.movePaddle,this)
+       
         //暫停控制
         if (this.pauseBtn) {
             this.pauseBtn.node.on('click', this.pauseGame, this);
@@ -94,43 +90,33 @@ export class GameControl extends Component {
         PhysicsSystem2D.instance.enable = !PhysicsSystem2D.instance.enable;
     }
 
-    onLeftButtonClick() {
+    movePaddle(e){
         const transform = this.getComponent(UITransform);
         const canvasWidth = transform.width
         const paddleWidth = this.paddle.getComponent(UITransform).width
-        // 处理左按钮点击事件，将滑板向左移动
-        const currentPosition = this.paddle.position;
+      
+        const touchPos = e.getLocation();
         const borderMin =  -(canvasWidth/2 - paddleWidth/2)
-        if (this.paddle) {
-            this.paddle.setPosition(new Vec3(currentPosition.x - this.splace, currentPosition.y, currentPosition.z));
-            if (currentPosition.x < borderMin) {
-                this.paddle.setPosition(new Vec3(borderMin, currentPosition.y, currentPosition.z));
-               }
-         }
-    }
-    onRightButtonClick() {
-        const transform = this.getComponent(UITransform);
-        const canvasWidth = transform.width
-        const paddleWidth = this.paddle.getComponent(UITransform).width
-        
-        // 处理右按钮点击事件，将滑板向右移动
-        const currentPosition = this.paddle.position;
         const borderMax =  canvasWidth/2 - paddleWidth/2
+        const currentPosition = this.paddle.position;
+        console.log(touchPos.x,'x');
+        
         if (this.paddle) {
-            this.paddle.setPosition(new Vec3(currentPosition.x + this.splace, currentPosition.y, currentPosition.z));
-            if (currentPosition.x > borderMax) {
-                this.paddle.setPosition(new Vec3(borderMax, currentPosition.y, currentPosition.z));
-               }
-         }
+            this.paddle.setPosition(new Vec3(touchPos.x-paddleWidth*2, currentPosition.y, currentPosition.z));
+           if (currentPosition.x<borderMin) {
+            this.paddle.setPosition(new Vec3(borderMin, currentPosition.y, currentPosition.z));
+           }if (currentPosition.x>borderMax) {
+            this.paddle.setPosition(new Vec3(borderMax, currentPosition.y, currentPosition.z));
+             }
+            }
     }
+    
     update(deltaTime: number)  {
       const ball = this.ball.getComponent(Ball)
       const layout = this.BrickLayout.getComponent(BrickLayout)
       const panel = this.OverPanel.getComponent(OverPanel)
       const countDown = this.countDown.getComponent(countDownNum)
       const timebar = this.timeBarNode.getComponent(timeBar)
-     console.log(countDown.countEnd,'222');
-     console.log(this.countDownExecuted,'111');
       if (countDown.countEnd && !this.countDownExecuted) {
         this.grayBg.active = false
         this.countDown.active =false

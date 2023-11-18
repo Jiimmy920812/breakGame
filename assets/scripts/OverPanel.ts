@@ -1,7 +1,5 @@
 import { _decorator, Component, Node,SpriteFrame,Input,SpriteComponent,PhysicsSystem2D,Director,Animation} from 'cc';
-import {GameControl} from './GameControl'
-import { timeBar } from './TimeBar';
-import { countDownNum } from './CountDownNum';
+
 
 
 
