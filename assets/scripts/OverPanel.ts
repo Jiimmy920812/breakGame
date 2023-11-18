@@ -1,11 +1,15 @@
 import { _decorator, Component, Node,SpriteFrame,Input,SpriteComponent,PhysicsSystem2D,Director,Animation} from 'cc';
 import {GameControl} from './GameControl'
+import { timeBar } from './TimeBar';
+import { countDownNum } from './CountDownNum';
+
+
+
 const { ccclass, property } = _decorator;
 @ccclass('OverPanel')
 export class OverPanel extends Component {
 
-    @property(Node)
-    private gameClt:Node = null;
+
     @property(Node)
     private grayBg:Node = null;
     @property(Node)
@@ -33,7 +37,6 @@ export class OverPanel extends Component {
         this.grayBg.active = true  
         this.OverPanel.active = true
         this.touchOverBg.active = true
-        const gameClt = this.gameClt.getComponent(GameControl)
         const animate = this.node.getComponent(Animation);
         const bg = this.OverPanel.getChildByName("Bg")
         const sprite = bg.getComponent(SpriteComponent);
@@ -42,7 +45,6 @@ export class OverPanel extends Component {
         }else{
           sprite.spriteFrame = this.loser
         }
-        clearInterval(gameClt.timer)
         PhysicsSystem2D.instance.enable = false;
         animate.play('result');
       }

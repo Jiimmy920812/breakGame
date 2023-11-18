@@ -1,7 +1,10 @@
-import { _decorator, Component, Node, Button, Vec3 ,UITransform, Label, PhysicsSystem2D,Input,SpriteFrame,SpriteComponent,find} from 'cc';
+import { _decorator, Component, Node, Button, Vec3 ,UITransform, Label, PhysicsSystem2D,Input,Director} from 'cc';
 import { Ball } from './Ball'
 import {BrickLayout} from './BrickLayout'
 import {OverPanel} from './OverPanel'
+import { countDownNum } from './CountDownNum';
+import {timeBar} from "./TimeBar" 
+
 
 const { ccclass, property } = _decorator;
 
@@ -10,7 +13,7 @@ export class GameControl extends Component {
   
 
 
-   
+    public init :boolean = true
 
     @property(Button)
     private leftBtn: Button | null = null;
@@ -46,26 +49,11 @@ export class GameControl extends Component {
 
     @property(Node)
     private countDown: Node | null = null;
-    @property({type: SpriteFrame})
-    num_2: SpriteFrame|null = null;
-
-    @property({type: SpriteFrame})
-    num_1: SpriteFrame|null = null;
-
-
+    public countDownExecuted :boolean = false
 
     @property(Node)
-    private timeBar: Node | null = null;
-    private timeBarX:number = -150 ;
-    private timeBarY:number = 7.7 ;
-    public barUnit:number = 0 ; 
-    public timer = null;
-
-    @property(Node)
-    private timeBarNum: Node | null = null;
-    private min: number = 1;
-    private sec: number = 0;
-
+    private timeBarNode: Node | null = null;
+    public timeBarExecuted :boolean = false
 
     
     onLoad() {
@@ -84,78 +72,24 @@ export class GameControl extends Component {
         if (this.pauseBtn) {
             this.pauseBtn.node.on('click', this.pauseGame, this);
         }
-        this.init()
-    }
-    init(){
-        //取得倒數記數
-        const timeNum =  this.timeBarNum.getComponent(Label)
-        this.sec =  this.min *60
-        timeNum.string = `01:00`;
-
-        const timeBar = this.timeBar.getComponent(UITransform);
-        this.barUnit = timeBar.width/this.sec 
-
-        //初始長條
         PhysicsSystem2D.instance.enable = true;
-        this.timeBar.getComponent(UITransform).width = this.barUnit
-        this.timeBar.position = new Vec3(this.timeBarX, this.timeBarY, 0);
     }
+   
     closeStartPanel(){
        this.startPanel.active = false
-       this.touchStartBg.active=false
+       this.touchStartBg.active = false
        this.startPlay()
     }
     
     startPlay(){
-        const ball = this.ball.getComponent(Ball)
-        const layout = this.BrickLayout.getComponent(BrickLayout)
-        const sprite = this.countDown.getComponent(SpriteComponent);
-        let count = 3
-        const timer  = setInterval(() => {
-            if (count > 1) {
-              count--;
-              if (count===2) {
-                sprite.spriteFrame = this.num_2
-              }
-              if (count===1) {
-                sprite.spriteFrame = this.num_1
-              }
-            } else {
-              clearInterval(timer); // 清除定时器
-              this.countDown.active = false
-              this.grayBg.active = false
-              layout.generateRectArray()
-              ball.startPlay()
-              this.gameCountDown()
-            }
-          }, 1000);
-        }
-    gameCountDown(){
-       //取得倒數記數
-        const timeNum =  this.timeBarNum.getComponent(Label)
-        const panel = this.OverPanel.getComponent(OverPanel)
-        this.timer = find("Canvas/TimeBar/time")
-        this.timer = setInterval(() => {
-          if (this.sec > 0&& PhysicsSystem2D.instance.enable) {
-              this.sec--;
-            if (this.sec<10) {
-                timeNum.string = `00:0${this.sec}`;
-            }else{
-                timeNum.string = `00:${this.sec}`;
-            }
-              console.log(this.timeBar,'timer');
-              
-              this.timeBarX = this.timeBarX + this.barUnit/2
-              this.timeBar.position = new Vec3(this.timeBarX, this.timeBarY, 0);
-              this.timeBar.getComponent(UITransform).width = this.timeBar.getComponent(UITransform).width + this.barUnit
-            }if (this.sec===0) {
-              clearInterval(this.timer); // 清除定时器
-              panel.result = false
-              panel.playResult()
-            }
-          }, 1000);
-        }
-
+        const countDown = this.countDown.getComponent(countDownNum)
+        countDown.isCounting = true
+      }
+    startProgressBar(){
+      const timebar = this.timeBarNode.getComponent(timeBar)
+      timebar.isCounting = true
+     
+    }
     pauseGame(){
         PhysicsSystem2D.instance.enable = !PhysicsSystem2D.instance.enable;
     }
@@ -189,8 +123,27 @@ export class GameControl extends Component {
                }
          }
     }
-    
-
-
+    update(deltaTime: number)  {
+      const ball = this.ball.getComponent(Ball)
+      const layout = this.BrickLayout.getComponent(BrickLayout)
+      const panel = this.OverPanel.getComponent(OverPanel)
+      const countDown = this.countDown.getComponent(countDownNum)
+      const timebar = this.timeBarNode.getComponent(timeBar)
+     console.log(countDown.countEnd,'222');
+     console.log(this.countDownExecuted,'111');
+      if (countDown.countEnd && !this.countDownExecuted) {
+        this.grayBg.active = false
+        this.countDown.active =false
+        layout.generateRectArray()
+        ball.startPlay()
+        this.startProgressBar()
+        this.countDownExecuted =true
+      }
+      if (timebar.countEnd && !this.timeBarExecuted) {
+        panel.result = false
+        panel.playResult()
+        this.timeBarExecuted =true
+     } 
+    }
 }
 

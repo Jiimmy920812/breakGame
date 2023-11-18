@@ -5,7 +5,7 @@ const { ccclass, property } = _decorator;
 @ccclass('Ball')
 export class Ball extends Component {
 
-    private speed :number =6;
+    private speed :number =10;
    
     @property(Node)
     private OverPanel: Node | null = null;
