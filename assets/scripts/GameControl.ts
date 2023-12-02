@@ -113,7 +113,8 @@ export class GameControl extends Component {
       if (countDown.countEnd && !this.countDownExecuted) {
         this.grayBg.active = false
         this.countDown.active =false
-        layout.generateRectArray()
+        // layout.generateRectArray()
+        layout.generateRectArray_level_2()
         ball.startPlay()
         this.startProgressBar()
         this.countDownExecuted =true
