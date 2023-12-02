@@ -1,4 +1,4 @@
-import { _decorator, Component, instantiate, Node, Prefab,SpriteFrame,SpriteComponent,UITransform,Collider2D } from 'cc';
+import { _decorator, Component, instantiate, Node, Prefab,SpriteFrame,SpriteComponent,UITransform,Collider2D,Animation } from 'cc';
 const { ccclass, property } = _decorator;
 
 @ccclass('BrickLayout')
@@ -6,6 +6,10 @@ export class BrickLayout extends Component {
 
     @property({type: Prefab})
     public brickPrefab: Prefab|null = null;
+
+  
+
+
     private numRows: number = 5;
     private numCols: number = 8;
 
@@ -64,6 +68,10 @@ export class BrickLayout extends Component {
                 // 根据索引设置不同的纹理
                 if (i === prizeTextureIndex) {
                     sprite.spriteFrame = this.PrizeTexture;
+                    const animate =  sprite.getComponent(Animation)
+                    console.log(animate,'sprite_layout');
+                    
+                    animate.play('twinkle');
                     // 设置Collider2D的tag为6
                     const collider = rectNode.getComponent(Collider2D);
                     if (collider) {

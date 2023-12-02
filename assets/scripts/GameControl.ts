@@ -93,7 +93,6 @@ export class GameControl extends Component {
         const borderMin =  -(canvasWidth/2 - paddleWidth/2)
         const borderMax =  canvasWidth/2 - paddleWidth/2
         const currentPosition = this.paddle.position;
-        console.log(touchPos.x,'x');
         
         if (this.paddle) {
             this.paddle.setPosition(new Vec3(touchPos.x-paddleWidth*2, currentPosition.y, currentPosition.z));

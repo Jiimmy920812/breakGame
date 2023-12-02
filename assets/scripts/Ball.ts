@@ -1,4 +1,4 @@
-import { _decorator, Component, Collider2D,Contact2DType,PhysicsSystem2D,IPhysics2DContact,RigidBody2D,Vec2, director, Director,Node, } from 'cc';
+import { _decorator, Component, Collider2D,Contact2DType,PhysicsSystem2D,IPhysics2DContact,RigidBody2D,Vec2, director, Director,Node,Animation} from 'cc';
 import {OverPanel} from './OverPanel'
 const { ccclass, property } = _decorator;
 
@@ -33,9 +33,24 @@ export class Ball extends Component {
     onBeginContact (selfCollider: Collider2D, otherCollider: Collider2D, contact: IPhysics2DContact | null) {
         const panel = this.OverPanel.getComponent(OverPanel)
         //一般磚
+     
         if (otherCollider.tag === 1) {
            director.once(Director.EVENT_AFTER_PHYSICS,()=>{
-             otherCollider.node.destroy()
+            const sprite =  otherCollider.node
+            const animate =  sprite.getComponent(Animation)
+            if (animate) {
+                // 添加动画播放完成的回调
+                animate.on(Animation.EventType.FINISHED, () => {
+                    // 在动画完成后执行销毁操作
+                    otherCollider.node.destroy();
+                });
+        
+                // 播放动画
+                animate.play('explosion');
+            } else {
+                // 如果未找到 Animation 组件，直接销毁节点
+                otherCollider.node.destroy();
+            }
            }) 
         }
         //地板
