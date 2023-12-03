@@ -1,4 +1,4 @@
-import { _decorator, Component, Node,SpriteFrame,Input,SpriteComponent,PhysicsSystem2D,Director,Animation} from 'cc';
+import { _decorator, Component, Node,SpriteFrame,Input,SpriteComponent,PhysicsSystem2D,Director,Animation,sys} from 'cc';
 
 
 
@@ -18,6 +18,12 @@ export class OverPanel extends Component {
     
     public result:boolean = false;
     public gameLevel:number = 1;
+
+    userData = {
+      name: 'Jimmy',
+      level: 1,
+    };
+
     
     @property({type: SpriteFrame})
     winer: SpriteFrame|null = null;
@@ -43,12 +49,16 @@ export class OverPanel extends Component {
         const sprite = bg.getComponent(SpriteComponent);
         if (this.result) {
           sprite.spriteFrame = this.winer
-          this.gameLevel++
+          this.userData.level++
         }else{
           sprite.spriteFrame = this.loser
-          this.gameLevel = 1
+          this.userData.level = 1
         }
+        //儲存資料
+        sys.localStorage.setItem('userData', JSON.stringify(this.userData));
+        //暫停遊戲
         PhysicsSystem2D.instance.enable = false;
+        //執行動畫
         animate.play('result');
       }
       closeOverPanel(){
@@ -59,7 +69,6 @@ export class OverPanel extends Component {
       }, 1000)
       }
     update(deltaTime: number) {
-        
     }
 }
 
