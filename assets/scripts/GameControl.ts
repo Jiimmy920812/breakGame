@@ -1,4 +1,4 @@
-import { _decorator, Component, Node, Button, Vec3 ,UITransform, PhysicsSystem2D,Input} from 'cc';
+import { _decorator, Component, Node, Button, Vec3 ,UITransform, PhysicsSystem2D,Input,Director} from 'cc';
 import { Ball } from './Ball'
 import {BrickLayout} from './BrickLayout'
 import {OverPanel} from './OverPanel'
@@ -11,9 +11,6 @@ const { ccclass, property } = _decorator;
 @ccclass('GameControl')
 export class GameControl extends Component {
   
-
-
-    public init :boolean = true
 
 
     @property(Button)
@@ -51,7 +48,12 @@ export class GameControl extends Component {
 
     
     onLoad() {
-        //起始面板點擊
+    
+      const panel = this.OverPanel.getComponent(OverPanel)
+      console.log(panel.gameLevel,'gameLevel');
+      
+      
+      //起始面板點擊
         if (this.touchStartBg) {
             this.touchStartBg.on(Input.EventType.TOUCH_START, this.closeStartPanel, this);   
                 }
@@ -113,8 +115,8 @@ export class GameControl extends Component {
       if (countDown.countEnd && !this.countDownExecuted) {
         this.grayBg.active = false
         this.countDown.active =false
-        // layout.generateRectArray()
-        layout.generateRectArray_level_2()
+        console.log(panel.gameLevel,'panel.gameLevel_update');
+        layout.generateRectArray(panel.gameLevel)
         ball.startPlay()
         this.startProgressBar()
         this.countDownExecuted =true

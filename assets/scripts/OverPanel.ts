@@ -8,6 +8,7 @@ const { ccclass, property } = _decorator;
 export class OverPanel extends Component {
 
 
+
     @property(Node)
     private grayBg:Node = null;
     @property(Node)
@@ -16,6 +17,8 @@ export class OverPanel extends Component {
     private OverPanel: Node | null = null;
     
     public result:boolean = false;
+    public gameLevel:number = 1;
+    
     @property({type: SpriteFrame})
     winer: SpriteFrame|null = null;
 
@@ -40,8 +43,10 @@ export class OverPanel extends Component {
         const sprite = bg.getComponent(SpriteComponent);
         if (this.result) {
           sprite.spriteFrame = this.winer
+          this.gameLevel++
         }else{
           sprite.spriteFrame = this.loser
+          this.gameLevel = 1
         }
         PhysicsSystem2D.instance.enable = false;
         animate.play('result');

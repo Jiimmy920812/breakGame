@@ -31,7 +31,7 @@ export class BrickLayout extends Component {
     onLoad() {
       
     }
-    generateRandomArray(length:number, countA:number, countB:number) {
+    generateRandomArray(length:number, countA:number, countB:number,count0:number) {
         const array = [];
 
         for (let i = 0; i < length; i++) {
@@ -42,7 +42,11 @@ export class BrickLayout extends Component {
             } else if (countB > 0) {
                 value = 2;
                 countB--;
-            } else {
+            } else if (count0 > 0) {
+                value = 0;
+                count0--;
+            }
+             else {
                 value = 1;
             }
             array.push(value);
@@ -56,26 +60,43 @@ export class BrickLayout extends Component {
 
         return array;
     }
-
-    generateRectArray() {
+    generateRectArray(level:number) {
         if (!this.brickPrefab) {
             return;
         }
         const numRows = this.numRows; // 行数
         const numCols = this.numCols; // 列数
     
-        const totalRectangles = numRows * numCols;
+        let array;
+        if (level === 1) {
+            const times_3 = 0;
+            const times_2 = 0;
+            const specialBox = 1
+            const totalRectangles = numRows * numCols;
+            array = this.generateRandomArray(totalRectangles, times_3, times_2,specialBox);
+        } else if (level === 2) {
+            const arrayA = [
+                1, 2, 3, 3, 3, 2, 1,
+                1, 2, 3, 0, 3, 2, 1,
+                1, 2, 3, 3, 3, 2, 1
+            ];
+    
+            const lengthArray = numRows * numCols;
+            const times_3 = 3;
+            const times_2 = 2;
+            const specialBox = 0
+            const arrayB = this.generateRandomArray(lengthArray, times_3, times_2,specialBox);
+    
+            array = arrayA.concat(arrayB);
+        } 
+    
+        const totalRectangles = array.length;
     
         // 取得父節點，用於放置生成的矩形
         const parentNode = new Node();
         this.node.addChild(parentNode);
     
-        let rectNode: Node | null = null;
-    
-        // 随机选择一个矩形作为 PrizeTexture
-        const prizeTextureIndex = Math.floor(Math.random() * totalRectangles);
-
-        
+        let rectNode = null;
     
         for (let i = 0; i < totalRectangles; i++) {
             // 創建一個矩形節點
@@ -86,97 +107,31 @@ export class BrickLayout extends Component {
             const row = Math.floor(i / numCols);
             const transform = rectNode.getComponent(UITransform);
             const xPos = col * transform.width;
-            const yPos = row * transform.height;
-            rectNode.setPosition(xPos, yPos,);
-            
+            const yPos = row * -transform.height;
+            rectNode.setPosition(xPos, yPos);
     
             // 將矩形節點添加到父節點
             parentNode.addChild(rectNode);
-    
-            // 获取Sprite组件
+            const type = array[i];
             const sprite = rectNode.getComponent(SpriteComponent);
+            const collider = rectNode.getComponent(Collider2D);
             if (sprite) {
-                // 根据索引设置不同的纹理
-                if (i === prizeTextureIndex) {
+                if (type === 0) {
                     sprite.spriteFrame = this.PrizeTexture;
-                    const animate =  sprite.getComponent(Animation)
-                    console.log(animate,'sprite_layout');
-                    
+                    const animate = sprite.getComponent(Animation);
                     animate.play('twinkle');
-                    // 设置Collider2D的tag为6
-                    const collider = rectNode.getComponent(Collider2D);
-                    if (collider) {
-                        collider.tag = 6;
-                    }
+                    collider.tag = 6;
+                } else if (type === 3) {
+                    sprite.spriteFrame = this.BrickTexture_3;
+                } else if (type === 2) {
+                    sprite.spriteFrame = this.BrickTexture_2;
                 } else {
                     sprite.spriteFrame = this.BrickTexture;
                 }
             }
         }
     }
-
-    generateRectArray_level_2(){
-        if (!this.brickPrefab) {
-            return;
-        }
-        const numRows = this.numRows; // 行数
-        const numCols = this.numCols; // 列数
-
-        const arrayA = [
-            1, 2, 3, 3, 3, 2, 1,
-            1, 2, 3, 0, 3, 2, 1,
-            1, 2, 3, 3, 3, 2, 1
-        ];
-
-        const lengthArray =  numRows * numCols;
-        const times_3 = 3;
-        const times_2 = 2;
-        const arrayB = this.generateRandomArray(lengthArray, times_3, times_2);
-
-        const mergedArray = arrayB.concat(arrayA);
-
-        const totalRectangles = mergedArray.length;
-        // 取得父節點，用於放置生成的矩形
-        const parentNode = new Node();
-        this.node.addChild(parentNode);
-
-        let rectNode: Node | null = null;
-
-        
-        for (let i = 0; i < totalRectangles; i++) {
-            // 創建一個矩形節點
-            rectNode = instantiate(this.brickPrefab);
-            // 設定矩形的位置
-            const col = i % numCols;
-            const row = Math.floor(i / numCols);
-            const transform = rectNode.getComponent(UITransform);
-            const xPos = col * transform.width;
-            const yPos = row * transform.height - 50;
-            rectNode.setPosition(xPos, yPos,);
-            
-             // 將矩形節點添加到父節點
-             parentNode.addChild(rectNode);
-             const type = mergedArray[i]
-             const sprite = rectNode.getComponent(SpriteComponent);
-             const collider = rectNode.getComponent(Collider2D);
-             if (sprite) {
-                if (type === 0) {
-                    sprite.spriteFrame = this.PrizeTexture;
-                    const animate =  sprite.getComponent(Animation)
-                    animate.play('twinkle');
-                    collider.tag = 6;
-                }else if (type === 3) {
-                    sprite.spriteFrame = this.BrickTexture_3;
-                }else if (type === 2) {
-                    sprite.spriteFrame = this.BrickTexture_2;
-                } 
-                else {
-                    sprite.spriteFrame = this.BrickTexture;
-                }
-            }
-        }
-
-    }
+   
 
 
     start() {
