@@ -13,17 +13,12 @@ export class OverPanel extends Component {
     private grayBg:Node = null;
     @property(Node)
     private touchOverBg:Node = null;
-    @property(Node)
-    private OverPanel: Node | null = null;
+
     
     public result:boolean = false;
     public gameLevel:number = 1;
 
-    userData = {
-      name: 'Jimmy',
-      level: 1,
-    };
-
+  
     
     @property({type: SpriteFrame})
     winer: SpriteFrame|null = null;
@@ -34,35 +29,41 @@ export class OverPanel extends Component {
 
     start() {
     //結束面板初始化
-    this.OverPanel.active = false
+    this.node.active = false
     this.touchOverBg.active = false
     if (this.touchOverBg) {
     this.touchOverBg.on(Input.EventType.TOUCH_START, this.closeOverPanel, this);   
         }
+    //讀取資料
+    const  userData = JSON.parse(sys.localStorage.getItem('userData'));    
+
     }
     playResult(){
         this.grayBg.active = true  
-        this.OverPanel.active = true
+        this.node.active = true
         this.touchOverBg.active = true
         const animate = this.node.getComponent(Animation);
-        const bg = this.OverPanel.getChildByName("Bg")
+        const bg = this.node.getChildByName("Bg")
         const sprite = bg.getComponent(SpriteComponent);
+        
+        //讀取資料
+        const  userData = JSON.parse(sys.localStorage.getItem('userData'));    
         if (this.result) {
           sprite.spriteFrame = this.winer
-          this.userData.level++
+          userData.level++
         }else{
           sprite.spriteFrame = this.loser
-          this.userData.level = 1
+          userData.level = 1
         }
         //儲存資料
-        sys.localStorage.setItem('userData', JSON.stringify(this.userData));
+        sys.localStorage.setItem('userData', JSON.stringify(userData));
         //暫停遊戲
         PhysicsSystem2D.instance.enable = false;
         //執行動畫
         animate.play('result');
       }
       closeOverPanel(){
-        this.OverPanel.active = false
+        this.node.active = false
         this.touchOverBg.active = false
         setTimeout(() => {
           Director.instance.loadScene('game');

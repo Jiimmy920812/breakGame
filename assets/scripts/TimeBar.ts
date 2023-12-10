@@ -35,9 +35,9 @@ export class timeBar extends Component {
             
             if (countNum===60) {
                 countDownStr = `01:00`
-            }if (countNum<60&&countNum>=10) {
+            }else if (countNum<60&&countNum>=10) {
                 countDownStr =`00:${countNum}`
-            }if (countNum<10) {
+            }else if (countNum<10) {
                 countDownStr = `00:0${countNum}`
             }
             this.node.getChildByName('countText').getComponent(Label).string = countDownStr
