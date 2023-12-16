@@ -52,7 +52,7 @@ export class BrickLayout extends Component {
             array.push(value);
         }
 
-        // 随机打乱数组
+        // 髓機打亂陣列
         for (let i = array.length - 1; i > 0; i--) {
             const j = Math.floor(Math.random() * (i + 1));
             [array[i], array[j]] = [array[j], array[i]];
@@ -69,8 +69,8 @@ export class BrickLayout extends Component {
     
         let array;
         if (level === 1) {
-            const times_3 = 0;
-            const times_2 = 0;
+            const times_3 = 3;
+            const times_2 = 3;
             const specialBox = 1
             const totalRectangles = numRows * numCols;
             array = this.generateRandomArray(totalRectangles, times_3, times_2,specialBox);
@@ -83,7 +83,7 @@ export class BrickLayout extends Component {
     
             const lengthArray = numRows * numCols;
             const times_3 = 3;
-            const times_2 = 2;
+            const times_2 = 3;
             const specialBox = 0
             const arrayB = this.generateRandomArray(lengthArray, times_3, times_2,specialBox);
     

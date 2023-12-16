@@ -16,6 +16,12 @@ export class GameControl extends Component {
     @property(Button)
     private pauseBtn: Button | null = null;
 
+    @property(Button)
+    private keepGoingBtn: Button | null = null;
+
+    @property(Node)
+    private keepGoingUI: Node | null = null;
+
 
     @property(Node)
     private ball: Node | null = null;
@@ -32,6 +38,8 @@ export class GameControl extends Component {
 
     @property(Node)
     private touchStartBg:Node = null;
+
+    
     @property(Node)
     private startPanel: Node | null = null;
 
@@ -56,10 +64,15 @@ export class GameControl extends Component {
         //手指操控
         this.node.on(Input.EventType.TOUCH_MOVE,this.movePaddle,this)
        
-        //暫停控制
+        //暫停Btn
         if (this.pauseBtn) {
             this.pauseBtn.node.on('click', this.pauseGame, this);
         }
+        //繼續遊戲Btn
+        if (this.keepGoingBtn) {
+        this.keepGoingBtn.node.on('click', this.keepGoing, this);
+      }
+        this.keepGoingUI.active = false
         PhysicsSystem2D.instance.enable = true;
     }
    
@@ -79,8 +92,19 @@ export class GameControl extends Component {
      
     }
     pauseGame(){
-        PhysicsSystem2D.instance.enable = !PhysicsSystem2D.instance.enable;
+        PhysicsSystem2D.instance.enable = false;
+        this.grayBg.active = true
+        this.keepGoingUI.active = true
+        //將node移置最上層
+        this.keepGoingUI.setSiblingIndex(100);
     }
+    keepGoing(){
+       PhysicsSystem2D.instance.enable = true;
+       this.grayBg.active = false
+       this.keepGoingUI.active = false
+    }
+
+
 
     movePaddle(e){
         const transform = this.getComponent(UITransform);
@@ -108,17 +132,18 @@ export class GameControl extends Component {
       const panel = this.OverPanel.getComponent(OverPanel)
       const countDown = this.countDown.getComponent(countDownNum)
       const timebar = this.timeBarNode.getComponent(timeBar)
+      //讀取資料
+      const  userData = JSON.parse(sys.localStorage.getItem('userData'));
+    
       if (countDown.countEnd && !this.countDownExecuted) {
         this.grayBg.active = false
         this.countDown.active =false
-        //讀取資料
-        const  userData = JSON.parse(sys.localStorage.getItem('userData'));
         layout.generateRectArray(userData.level)
         ball.startPlay()
         this.startProgressBar()
         this.countDownExecuted =true
       }
-      if (timebar.countEnd && !this.timeBarExecuted) {
+      else if (timebar.countEnd && !this.timeBarExecuted) {
         panel.result = false
         panel.playResult()
         this.timeBarExecuted =true
