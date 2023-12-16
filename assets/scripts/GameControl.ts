@@ -1,4 +1,4 @@
-import { _decorator, Component, Node, Button, Vec3 ,UITransform, PhysicsSystem2D,Input,sys} from 'cc';
+import { _decorator, Component, Node, Button, Vec3 ,UITransform, PhysicsSystem2D,Input,sys,Label} from 'cc';
 import { Ball } from './Ball'
 import {BrickLayout} from './BrickLayout'
 import {OverPanel} from './OverPanel'

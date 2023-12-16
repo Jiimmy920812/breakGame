@@ -25,6 +25,7 @@ export class OverPanel extends Component {
     userData = {
       name: '',
       level: 1,
+      overTime:''
     };
 
     

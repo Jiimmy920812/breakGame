@@ -1,5 +1,5 @@
-import { _decorator, Component, Node,SpriteFrame,Input,SpriteComponent,PhysicsSystem2D,Director,Animation,sys} from 'cc';
-
+import { _decorator, Component, Node,SpriteFrame,Input,SpriteComponent,PhysicsSystem2D,Director,Animation,sys, Label} from 'cc';
+import {timeBar} from "./TimeBar" 
 
 
 
@@ -11,6 +11,10 @@ export class OverPanel extends Component {
 
     @property(Node)
     private grayBg:Node = null;
+
+    @property(Node)
+    private timeBarNode:Node = null;
+
     @property(Node)
     private touchOverBg:Node = null;
 
@@ -34,20 +38,32 @@ export class OverPanel extends Component {
     if (this.touchOverBg) {
     this.touchOverBg.on(Input.EventType.TOUCH_START, this.closeOverPanel, this);   
         }
-    //讀取資料
-    const  userData = JSON.parse(sys.localStorage.getItem('userData'));    
 
     }
     playResult(){
+        
         this.grayBg.active = true  
         this.node.active = true
         this.touchOverBg.active = true
         const animate = this.node.getComponent(Animation);
         const bg = this.node.getChildByName("Bg")
+        const name = this.node.getChildByName("Name")
+        const time = this.node.getChildByName("Time")
         const sprite = bg.getComponent(SpriteComponent);
+        const nameSprite = name.getComponent(Label);
+        const timeSprite = time.getComponent(Label);
         
+        const timebar = this.timeBarNode.getComponent(timeBar)
         //讀取資料
-        const  userData = JSON.parse(sys.localStorage.getItem('userData'));    
+        const  userData = JSON.parse(sys.localStorage.getItem('userData'));   
+
+        //寫入名字及結果時間
+        const timeUI = timebar.node.getChildByName('countText').getComponent(Label)
+        let overTime = `時間 : ${timeUI.string}`
+        nameSprite.string =  userData.name
+        timeSprite.string =  overTime
+        userData.time = overTime
+
         if (this.result) {
           sprite.spriteFrame = this.winer
           userData.level++
