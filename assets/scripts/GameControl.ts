@@ -1,4 +1,4 @@
-import { _decorator, Component, Node, Button, Vec3 ,UITransform, PhysicsSystem2D,Input,sys,Label} from 'cc';
+import { _decorator, Component, Node, Button, Vec3 ,UITransform, PhysicsSystem2D,Input,sys,Label,SpriteFrame,SpriteComponent} from 'cc';
 import { Ball } from './Ball'
 import {BrickLayout} from './BrickLayout'
 import {OverPanel} from './OverPanel'
@@ -43,6 +43,31 @@ export class GameControl extends Component {
     @property(Node)
     private startPanel: Node | null = null;
 
+    @property({type: SpriteFrame})
+    startPanl_L1_info: SpriteFrame|null = null;
+    
+    public startPanl_L1_title:string = '第一關遊戲說明'
+    public startPanl_L1_text:string =
+    `
+    透過左、右方向鍵控制底板擊落磚塊
+    最快擊落寶物磚塊者即可獲勝！！
+    `
+    
+    @property({type: SpriteFrame})
+    startPanl_L2_info: SpriteFrame|null = null;
+    
+    public startPanl_L2_title:string = '第二關遊戲說明'
+    public startPanl_L2_text:string = 
+    `
+    歡迎來到第二關~這次難度增加囉！
+    多了兩種特殊南瓜，需多敲擊幾次
+    加油！！
+    `
+
+
+    @property(Node)
+    private levelUI: Node | null = null;
+
     @property(Node)
     private grayBg: Node | null = null;
 
@@ -53,6 +78,7 @@ export class GameControl extends Component {
     @property(Node)
     private timeBarNode: Node | null = null;
     public timeBarExecuted :boolean = false
+    
 
     
     onLoad() {
@@ -71,20 +97,34 @@ export class GameControl extends Component {
         //繼續遊戲Btn
         if (this.keepGoingBtn) {
         this.keepGoingBtn.node.on('click', this.keepGoing, this);
+        
       }
         this.keepGoingUI.active = false
         PhysicsSystem2D.instance.enable = true;
+
     }
    
     closeStartPanel(){
        this.startPanel.active = false
        this.touchStartBg.active = false
-       this.startPlay()
+       this.showLevel()
     }
-    
+    showLevel(){
+      this.levelUI.active = true
+      const  userData = JSON.parse(sys.localStorage.getItem('userData'));
+       const levelLabel =  this.levelUI.getComponent(Label);
+       levelLabel.string = `LEVEL${userData.level}`
+       setTimeout(() => {
+        this.levelUI.active = false
+        this.startPlay()
+       }, 1000);
+    }
     startPlay(){
+      this.countDown.active = true  
+      setTimeout(() => {
         const countDown = this.countDown.getComponent(countDownNum)
         countDown.isCounting = true
+       }, 50); 
       }
     startProgressBar(){
       const timebar = this.timeBarNode.getComponent(timeBar)
@@ -99,7 +139,7 @@ export class GameControl extends Component {
         this.keepGoingUI.setSiblingIndex(100);
     }
     keepGoing(){
-       PhysicsSystem2D.instance.enable = true;
+      PhysicsSystem2D.instance.enable = true;
        this.grayBg.active = false
        this.keepGoingUI.active = false
     }
@@ -132,9 +172,25 @@ export class GameControl extends Component {
       const panel = this.OverPanel.getComponent(OverPanel)
       const countDown = this.countDown.getComponent(countDownNum)
       const timebar = this.timeBarNode.getComponent(timeBar)
+      
+      //起始面板資訊
+      const SP_title = this.startPanel.getChildByName('title').getComponent(Label)
+      const SP_info = this.startPanel.getChildByName('info').getComponent(SpriteComponent)
+      const SP_infoText = this.startPanel.getChildByName('infoText').getComponent(Label)
       //讀取資料
       const  userData = JSON.parse(sys.localStorage.getItem('userData'));
-    
+      
+      if (userData.level === 1) {
+        SP_title.string = this.startPanl_L1_title
+        SP_info.spriteFrame = this.startPanl_L1_info
+        SP_infoText.string = this.startPanl_L1_text
+      }if (userData.level === 2) {
+        SP_title.string = this.startPanl_L2_title 
+        SP_info.spriteFrame = this.startPanl_L2_info
+        SP_infoText.string = this.startPanl_L2_text
+      }
+
+
       if (countDown.countEnd && !this.countDownExecuted) {
         this.grayBg.active = false
         this.countDown.active =false

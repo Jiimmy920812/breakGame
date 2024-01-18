@@ -69,8 +69,8 @@ export class BrickLayout extends Component {
     
         let array;
         if (level === 1) {
-            const times_3 = 3;
-            const times_2 = 3;
+            const times_3 = 0;
+            const times_2 = 0;
             const specialBox = 1
             const totalRectangles = numRows * numCols;
             array = this.generateRandomArray(totalRectangles, times_3, times_2,specialBox);

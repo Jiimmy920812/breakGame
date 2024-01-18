@@ -57,10 +57,10 @@ export class Ball extends Component {
             
            const frame= sprite.getComponent(SpriteComponent)
            const frameName = frame.spriteFrame.name
-           if (frameName === 'box_3') {
+           if (frameName === 'lv3_box') {
             frame.spriteFrame = this.BrickTexture_2
             return
-           }else if (frameName === 'box_2') {
+           }else if (frameName === 'lv2_box') {
             frame.spriteFrame = this.BrickTexture
             return
            }else{

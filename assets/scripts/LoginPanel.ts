@@ -41,7 +41,6 @@ export class OverPanel extends Component {
             this.node.active = false
             this.startPanel.active = true
             this.touchStartBg.active = true
-            this.countNum.active = true
          }
     }
 

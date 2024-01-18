@@ -1,4 +1,4 @@
-import { _decorator, Component, Node,SpriteFrame,Input,SpriteComponent,PhysicsSystem2D,Director,Animation,sys, Label} from 'cc';
+import { _decorator, Component, Node,SpriteFrame,Input,SpriteComponent,PhysicsSystem2D,Director,Animation,sys, Label,Button} from 'cc';
 import {timeBar} from "./TimeBar" 
 
 
@@ -15,28 +15,46 @@ export class OverPanel extends Component {
     @property(Node)
     private timeBarNode:Node = null;
 
-    @property(Node)
-    private touchOverBg:Node = null;
 
-    
+    @property(Button)
+    private gameBtn: Button | null = null;
+
+    @property(Button)
+    private checkBtn: Button | null = null;
+
     public result:boolean = false;
-    public gameLevel:number = 1;
 
   
-    
     @property({type: SpriteFrame})
-    winer: SpriteFrame|null = null;
+    victory_Bg: SpriteFrame|null = null;
 
     @property({type: SpriteFrame})
-    loser: SpriteFrame|null = null;
+    fail_Bg: SpriteFrame|null = null;
+
+    @property({type: SpriteFrame})
+    victory_context: SpriteFrame|null = null;
+    
+    @property({type: SpriteFrame})
+    fail_context: SpriteFrame|null = null;
+
+    @property({type: SpriteFrame})
+    victory_1: SpriteFrame|null = null;
+
+    @property({type: SpriteFrame})
+    fail_1: SpriteFrame|null = null;
+
+    @property({type: SpriteFrame})
+    victory_2: SpriteFrame|null = null;
+
+    @property({type: SpriteFrame})
+    fail_2: SpriteFrame|null = null;
 
 
     start() {
     //結束面板初始化
     this.node.active = false
-    this.touchOverBg.active = false
-    if (this.touchOverBg) {
-    this.touchOverBg.on(Input.EventType.TOUCH_START, this.closeOverPanel, this);   
+    if (this.gameBtn) {
+    this.gameBtn.node.on(Input.EventType.TOUCH_START, this.closeOverPanel, this);   
         }
 
     }
@@ -44,14 +62,22 @@ export class OverPanel extends Component {
         
         this.grayBg.active = true  
         this.node.active = true
-        this.touchOverBg.active = true
         const animate = this.node.getComponent(Animation);
         const bg = this.node.getChildByName("Bg")
+        const context = this.node.getChildByName("Context")
+        const title = this.node.getChildByName("Title")
+        const gameBtn = this.node.getChildByName("GameBtn").getChildByName("Label")
         const name = this.node.getChildByName("Name")
-        const time = this.node.getChildByName("Time")
-        const sprite = bg.getComponent(SpriteComponent);
+        const time = context.getChildByName("Time")
+       
+        const bg_sprite = bg.getComponent(SpriteComponent);
+        const context_sprite = context.getComponent(SpriteComponent);
+        const title_sprite = title.getComponent(SpriteComponent);
         const nameSprite = name.getComponent(Label);
         const timeSprite = time.getComponent(Label);
+        const gameBtnSprite = gameBtn.getComponent(Label);
+        
+   
         
         const timebar = this.timeBarNode.getComponent(timeBar)
         //讀取資料
@@ -59,16 +85,37 @@ export class OverPanel extends Component {
 
         //寫入名字及結果時間
         const timeUI = timebar.node.getChildByName('countText').getComponent(Label)
-        let overTime = `時間 : ${timeUI.string}`
+        let overTime = ` ${timeUI.string}`
         nameSprite.string =  userData.name
         timeSprite.string =  overTime
         userData.time = overTime
-
+        
+        //開啟gameBtn/關閉查看checkBtn
+        this.gameBtn.node.active = true
+        this.checkBtn.node.active = false
+        //設定結果面板
         if (this.result) {
-          sprite.spriteFrame = this.winer
+          bg_sprite.spriteFrame = this.victory_Bg
+          context_sprite.spriteFrame = this.victory_context
+         if (userData.level===1) {
+          title_sprite.spriteFrame = this.victory_1
+          gameBtnSprite.string = '往下一關'
+         }if (userData.level===2) {
+          this.gameBtn.node.active = false
+          this.checkBtn.node.active = true
+          title_sprite.spriteFrame = this.victory_2
+          gameBtnSprite.string = '查看排行'
+         }
           userData.level++
         }else{
-          sprite.spriteFrame = this.loser
+          bg_sprite.spriteFrame = this.fail_Bg
+          context_sprite.spriteFrame = this.fail_context
+          gameBtnSprite.string = '再玩一次'
+          if (userData.level===1) {
+            title_sprite.spriteFrame = this.fail_1
+          }if (userData.level===2) {
+            title_sprite.spriteFrame = this.fail_2
+          }
           userData.level = 1
         }
         //儲存資料
@@ -80,7 +127,6 @@ export class OverPanel extends Component {
       }
       closeOverPanel(){
         this.node.active = false
-        this.touchOverBg.active = false
         setTimeout(() => {
           Director.instance.loadScene('game');
       }, 1000)
