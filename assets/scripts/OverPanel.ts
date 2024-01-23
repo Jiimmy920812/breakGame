@@ -15,7 +15,6 @@ export class OverPanel extends Component {
     @property(Node)
     private timeBarNode:Node = null;
 
-
     @property(Button)
     private gameBtn: Button | null = null;
 
@@ -51,11 +50,14 @@ export class OverPanel extends Component {
 
 
     start() {
-    //結束面板初始化
+      //結束面板初始化
     this.node.active = false
     if (this.gameBtn) {
     this.gameBtn.node.on(Input.EventType.TOUCH_START, this.closeOverPanel, this);   
         }
+    if (this.checkBtn) {
+      this.gameBtn.node.on(Input.EventType.TOUCH_START, this.checkList, this);   
+          }
 
     }
     playResult(){
@@ -93,6 +95,8 @@ export class OverPanel extends Component {
         //開啟gameBtn/關閉查看checkBtn
         this.gameBtn.node.active = true
         this.checkBtn.node.active = false
+      
+       
         //設定結果面板
         if (this.result) {
           bg_sprite.spriteFrame = this.victory_Bg
@@ -125,8 +129,13 @@ export class OverPanel extends Component {
         //執行動畫
         animate.play('result');
       }
+      
+      checkList(){
+        setTimeout(() => {
+          Director.instance.loadScene('rankList');
+      }, 1000)
+      }
       closeOverPanel(){
-        this.node.active = false
         setTimeout(() => {
           Director.instance.loadScene('game');
       }, 1000)

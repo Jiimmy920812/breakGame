@@ -22,6 +22,7 @@ export class GameControl extends Component {
     @property(Node)
     private keepGoingUI: Node | null = null;
 
+    
 
     @property(Node)
     private ball: Node | null = null;

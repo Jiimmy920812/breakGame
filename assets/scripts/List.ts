@@ -1,16 +1,23 @@
-import { _decorator, Component, Node ,instantiate,Prefab,Label} from 'cc';
+import { _decorator, Component, Node ,instantiate,Prefab,Label,Button,Input,Director} from 'cc';
 const { ccclass, property } = _decorator;
 
-@ccclass('ListPersonal')
-export class ListPersonal extends Component {
+@ccclass('list')
+export class list extends Component {
     
     @property({type: Prefab})
     public personPrefab: Prefab|null = null;
     
-    
+    @property(Button)
+    private gameBtn: Button | null = null;
+
+
     list_person = {name:'jimmy',time:'00:23',order:3};
     
     start() {
+        if (this.gameBtn) {
+            this.gameBtn.node.on(Input.EventType.TOUCH_START, this.closeList, this);   
+                }
+       
         const parentNode = new Node()
         this.node.addChild(parentNode)
         
@@ -32,6 +39,12 @@ export class ListPersonal extends Component {
            listNode.setPosition(xPos, yPos);
            parentNode.addChild(listNode);
     }
+    closeList(){
+        // this.node.active = false
+        setTimeout(() => {
+          Director.instance.loadScene('game');
+      }, 1000)
+      }
 
     update(deltaTime: number) {
         
