@@ -1,6 +1,6 @@
 import { _decorator, Component, Node,SpriteFrame,Input,SpriteComponent,PhysicsSystem2D,Director,Animation,sys, Label,Button} from 'cc';
 import {timeBar} from "./TimeBar" 
-
+import { client } from "./util/tRPC_Server";
 
 
 const { ccclass, property } = _decorator;
@@ -56,7 +56,7 @@ export class OverPanel extends Component {
     this.gameBtn.node.on(Input.EventType.TOUCH_START, this.closeOverPanel, this);   
         }
     if (this.checkBtn) {
-      this.gameBtn.node.on(Input.EventType.TOUCH_START, this.checkList, this);   
+      this.checkBtn.node.on(Input.EventType.TOUCH_START, this.checkList, this);   
           }
 
     }
@@ -83,14 +83,18 @@ export class OverPanel extends Component {
         
         const timebar = this.timeBarNode.getComponent(timeBar)
         //讀取資料
-        const  userData = JSON.parse(sys.localStorage.getItem('userData'));   
+        const  userData = JSON.parse(sys.localStorage.getItem('profiles'));   
 
         //寫入名字及結果時間
         const timeUI = timebar.node.getChildByName('countText').getComponent(Label)
         let overTime = ` ${timeUI.string}`
         nameSprite.string =  userData.name
         timeSprite.string =  overTime
-        userData.time = overTime
+        
+        
+        //時間取秒數
+        let lastTwoDigits = parseInt(overTime.slice(-2), 10)
+        userData.score = lastTwoDigits
         
         //開啟gameBtn/關閉查看checkBtn
         this.gameBtn.node.active = true
@@ -101,16 +105,19 @@ export class OverPanel extends Component {
         if (this.result) {
           bg_sprite.spriteFrame = this.victory_Bg
           context_sprite.spriteFrame = this.victory_context
-         if (userData.level===1) {
+          if (userData.level===1) {
           title_sprite.spriteFrame = this.victory_1
           gameBtnSprite.string = '往下一關'
-         }if (userData.level===2) {
+          userData.level++
+         }else if (userData.level===2) {
           this.gameBtn.node.active = false
           this.checkBtn.node.active = true
           title_sprite.spriteFrame = this.victory_2
           gameBtnSprite.string = '查看排行'
+          userData.level = 1
+          //後端更新資料
+          client.scoreboard.update.mutate({ userId:userData.userId , score: String(lastTwoDigits) })
          }
-          userData.level++
         }else{
           bg_sprite.spriteFrame = this.fail_Bg
           context_sprite.spriteFrame = this.fail_context
@@ -123,7 +130,7 @@ export class OverPanel extends Component {
           userData.level = 1
         }
         //儲存資料
-        sys.localStorage.setItem('userData', JSON.stringify(userData));
+        sys.localStorage.setItem('profiles', JSON.stringify(userData));
         //暫停遊戲
         PhysicsSystem2D.instance.enable = false;
         //執行動畫
@@ -131,11 +138,13 @@ export class OverPanel extends Component {
       }
       
       checkList(){
+        console.log('checkList');
         setTimeout(() => {
           Director.instance.loadScene('rankList');
       }, 1000)
       }
       closeOverPanel(){
+        console.log('game');
         setTimeout(() => {
           Director.instance.loadScene('game');
       }, 1000)

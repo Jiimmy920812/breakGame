@@ -6,6 +6,7 @@ import { countDownNum } from './CountDownNum';
 import {timeBar} from "./TimeBar" 
 
 
+
 const { ccclass, property } = _decorator;
 
 @ccclass('GameControl')
@@ -83,7 +84,7 @@ export class GameControl extends Component {
 
     
     onLoad() {
-  
+      
       //起始面板點擊
         if (this.touchStartBg) {
             this.touchStartBg.on(Input.EventType.TOUCH_START, this.closeStartPanel, this);   
@@ -112,7 +113,7 @@ export class GameControl extends Component {
     }
     showLevel(){
       this.levelUI.active = true
-      const  userData = JSON.parse(sys.localStorage.getItem('userData'));
+      const  userData = JSON.parse(sys.localStorage.getItem('profiles'));
        const levelLabel =  this.levelUI.getComponent(Label);
        levelLabel.string = `LEVEL${userData.level}`
        setTimeout(() => {
@@ -179,7 +180,7 @@ export class GameControl extends Component {
       const SP_info = this.startPanel.getChildByName('info').getComponent(SpriteComponent)
       const SP_infoText = this.startPanel.getChildByName('infoText').getComponent(Label)
       //讀取資料
-      const  userData = JSON.parse(sys.localStorage.getItem('userData'));
+      const  userData = JSON.parse(sys.localStorage.getItem('profiles'));
       
       if (userData.level === 1) {
         SP_title.string = this.startPanl_L1_title

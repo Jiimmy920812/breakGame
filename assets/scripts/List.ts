@@ -1,4 +1,5 @@
-import { _decorator, Component, Node ,instantiate,Prefab,Label,Button,Input,Director} from 'cc';
+import { _decorator, Component, Node ,instantiate,Prefab,Label,Button,Input,Director,sys} from 'cc';
+import { client } from "./util/tRPC_Server";
 const { ccclass, property } = _decorator;
 
 @ccclass('list')
@@ -10,10 +11,19 @@ export class list extends Component {
     @property(Button)
     private gameBtn: Button | null = null;
 
-
-    list_person = {name:'jimmy',time:'00:23',order:3};
+    scoreBoardList = null
+    userData = null
     
-    start() {
+    async start() {
+        this.userData= JSON.parse(sys.localStorage.getItem('profiles'));  
+        this.scoreBoardList = await client.scoreboard.get.query({size:999, order_by:"DESC"})
+        
+        const personObj =  this.scoreBoardList.list.find((obj)=>obj.name===this.userData.name)
+        const personIndex =  this.scoreBoardList.list.findIndex((obj)=>obj.name===this.userData.name)
+
+       
+        
+
         if (this.gameBtn) {
             this.gameBtn.node.on(Input.EventType.TOUCH_START, this.closeList, this);   
                 }
@@ -26,13 +36,14 @@ export class list extends Component {
 
            //寫入rank
            const rankNumUI = listNode.getChildByName('rank').getChildByName('rankNum').getComponent(Label); 
-           rankNumUI.string = this.list_person.order
+           rankNumUI.string = personIndex+1
            
-           //寫入time跟name
+        //    //寫入time跟name
            const nameUI = listNode.getChildByName('bg').getChildByName('name').getComponent(Label); 
            const timeUI = listNode.getChildByName('bg').getChildByName('time').getComponent(Label); 
-           nameUI.string = this.list_person.name
-           timeUI.string =this.list_person.time
+           nameUI.string = personObj.name
+           timeUI.string =`00:${personObj.record}`
+
            
            const xPos =0;
            const yPos = -197;
@@ -40,9 +51,9 @@ export class list extends Component {
            parentNode.addChild(listNode);
     }
     closeList(){
-        // this.node.active = false
+        console.log('listGame');
         setTimeout(() => {
-          Director.instance.loadScene('game');
+          Director.instance.loadScene('login');
       }, 1000)
       }
 
