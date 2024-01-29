@@ -53,7 +53,7 @@ export class list extends Component {
     closeList(){
         console.log('listGame');
         setTimeout(() => {
-          Director.instance.loadScene('login');
+          Director.instance.loadScene('game');
       }, 1000)
       }
 

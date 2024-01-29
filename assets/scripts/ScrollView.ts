@@ -1,4 +1,4 @@
-import { _decorator, Component, Node,Prefab,instantiate,Label ,sys} from 'cc';
+import { _decorator, Component, Node,Prefab,instantiate,Label ,sys,SpriteComponent,SpriteFrame} from 'cc';
 import { client } from "./util/tRPC_Server";
 const { ccclass, property } = _decorator;
 
@@ -11,6 +11,18 @@ export class List extends Component {
      
     @property({type: Prefab})
     public personPrefab: Prefab|null = null;
+
+    @property({type: SpriteFrame})
+    lv1: SpriteFrame|null = null;
+
+    @property({type: SpriteFrame})
+    lv2: SpriteFrame|null = null;
+
+    @property({type: SpriteFrame})
+    lv3: SpriteFrame|null = null;
+
+    @property({type: SpriteFrame})
+    lv_none: SpriteFrame|null = null;
 
    scoreBoardList = null
    userData = null
@@ -35,10 +47,30 @@ export class List extends Component {
              }else{
                 listNode = instantiate(this.otherPrefab);
              }
-             //寫入rank
-             const rankNumUI = listNode.getChildByName('rank').getChildByName('rankNum').getComponent(Label); 
-             rankNumUI.string = i+1
+
+           
              
+             //寫入rank
+             const rankNumUI = listNode.getChildByName('rank').getChildByName('rankNum') 
+             const rankNumBg = listNode.getChildByName('rank').getComponent(SpriteComponent)
+             const rank = i+1
+             rankNumUI.getComponent(Label).string = rank
+             
+
+
+             console.log(this.otherPrefab,'perhabs');
+             console.log(rankNumBg.spriteFrame  ,'rankNumBg');
+             
+             
+             
+             if (rank===1) rankNumBg.spriteFrame = this.lv1
+             else if (rank===2) rankNumBg.spriteFrame = this.lv2
+             else if (rank===3) rankNumBg.spriteFrame = this.lv3
+             else{
+                rankNumBg.spriteFrame = this.lv_none
+             }
+
+
              //寫入time跟name
              const nameUI = listNode.getChildByName('bg').getChildByName('name').getComponent(Label); 
              const timeUI = listNode.getChildByName('bg').getChildByName('time').getComponent(Label); 

@@ -1,7 +1,7 @@
 import { _decorator, Component, Node,SpriteFrame,Input,SpriteComponent,PhysicsSystem2D,Director,Animation,sys, Label,Button} from 'cc';
 import {timeBar} from "./TimeBar" 
 import { client } from "./util/tRPC_Server";
-
+import { AudioController } from './AudioController';
 
 const { ccclass, property } = _decorator;
 @ccclass('OverPanel')
@@ -23,6 +23,8 @@ export class OverPanel extends Component {
 
     public result:boolean = false;
 
+    @property(Node)
+    private audioController: Node | null = null;
   
     @property({type: SpriteFrame})
     victory_Bg: SpriteFrame|null = null;
@@ -101,8 +103,14 @@ export class OverPanel extends Component {
         this.checkBtn.node.active = false
       
        
+        //關閉背景音樂
+        const audioController = this.audioController.getComponent(AudioController)
+        audioController.pause('bg')
         //設定結果面板
         if (this.result) {
+          //勝利音樂
+          audioController.play('winner',1)
+          //設定樣式
           bg_sprite.spriteFrame = this.victory_Bg
           context_sprite.spriteFrame = this.victory_context
           if (userData.level===1) {
@@ -119,6 +127,8 @@ export class OverPanel extends Component {
           client.scoreboard.update.mutate({ userId:userData.userId , score: String(lastTwoDigits) })
          }
         }else{
+          //失敗音樂
+          audioController.play('loser',1)
           bg_sprite.spriteFrame = this.fail_Bg
           context_sprite.spriteFrame = this.fail_context
           gameBtnSprite.string = '再玩一次'
@@ -144,7 +154,6 @@ export class OverPanel extends Component {
       }, 1000)
       }
       closeOverPanel(){
-        console.log('game');
         setTimeout(() => {
           Director.instance.loadScene('game');
       }, 1000)

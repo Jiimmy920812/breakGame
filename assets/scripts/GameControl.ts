@@ -1,9 +1,10 @@
-import { _decorator, Component, Node, Button, Vec3 ,UITransform, PhysicsSystem2D,Input,sys,Label,SpriteFrame,SpriteComponent} from 'cc';
+import { _decorator, Component, Node, Button, Vec3 ,UITransform, PhysicsSystem2D,Input,sys,Label,SpriteFrame,SpriteComponent,AudioSource} from 'cc';
 import { Ball } from './Ball'
 import {BrickLayout} from './BrickLayout'
 import {OverPanel} from './OverPanel'
 import { countDownNum } from './CountDownNum';
 import {timeBar} from "./TimeBar" 
+import { AudioController } from './AudioController';
 
 
 
@@ -23,7 +24,8 @@ export class GameControl extends Component {
     @property(Node)
     private keepGoingUI: Node | null = null;
 
-    
+    @property(Node)
+    private audioController: Node | null = null;
 
     @property(Node)
     private ball: Node | null = null;
@@ -84,7 +86,6 @@ export class GameControl extends Component {
 
     
     onLoad() {
-      
       //起始面板點擊
         if (this.touchStartBg) {
             this.touchStartBg.on(Input.EventType.TOUCH_START, this.closeStartPanel, this);   
@@ -157,20 +158,22 @@ export class GameControl extends Component {
         const borderMin =  -(canvasWidth/2 - paddleWidth/2)
         const borderMax =  canvasWidth/2 - paddleWidth/2
         const currentPosition = this.paddle.position;
-        
+
         if (this.paddle) {
-            this.paddle.setPosition(new Vec3(touchPos.x-paddleWidth*2, currentPosition.y, currentPosition.z));
+            this.paddle.setPosition(new Vec3(touchPos.x-canvasWidth/2-paddleWidth*3/4, currentPosition.y, currentPosition.z));
            if (currentPosition.x<borderMin) {
             this.paddle.setPosition(new Vec3(borderMin, currentPosition.y, currentPosition.z));
            }if (currentPosition.x>borderMax) {
             this.paddle.setPosition(new Vec3(borderMax, currentPosition.y, currentPosition.z));
              }
             }
+            
     }
     
     update(deltaTime: number)  {
       const ball = this.ball.getComponent(Ball)
       const layout = this.BrickLayout.getComponent(BrickLayout)
+      const audioController = this.audioController.getComponent(AudioController)
       const panel = this.OverPanel.getComponent(OverPanel)
       const countDown = this.countDown.getComponent(countDownNum)
       const timebar = this.timeBarNode.getComponent(timeBar)
@@ -198,6 +201,7 @@ export class GameControl extends Component {
         this.countDown.active =false
         layout.generateRectArray(userData.level)
         ball.startPlay()
+        audioController.play('bg')
         this.startProgressBar()
         this.countDownExecuted =true
       }

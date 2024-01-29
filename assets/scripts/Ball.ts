@@ -15,10 +15,13 @@ export class Ball extends Component {
     private OverPanel: Node | null = null;
     
     @property({type: SpriteFrame})
-    BrickTexture: SpriteFrame|null = null;
+    lv3_box_0: SpriteFrame|null = null;
 
     @property({type: SpriteFrame})
-    BrickTexture_2: SpriteFrame|null = null;
+    lv3_box_1: SpriteFrame|null = null;
+
+    @property({type: SpriteFrame})
+    lv2_box_0: SpriteFrame|null = null;
 
     start () {
       
@@ -57,11 +60,15 @@ export class Ball extends Component {
             
            const frame= sprite.getComponent(SpriteComponent)
            const frameName = frame.spriteFrame.name
+           
            if (frameName === 'lv3_box') {
-            frame.spriteFrame = this.BrickTexture_2
+            frame.spriteFrame = this.lv3_box_0
+            return
+           }else if (frameName === 'lv3_box_0') {
+            frame.spriteFrame = this.lv3_box_1
             return
            }else if (frameName === 'lv2_box') {
-            frame.spriteFrame = this.BrickTexture
+            frame.spriteFrame = this.lv2_box_0
             return
            }else{
                 const animate =  sprite.getComponent(Animation)
