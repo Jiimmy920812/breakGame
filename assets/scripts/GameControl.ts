@@ -5,7 +5,7 @@ import {OverPanel} from './OverPanel'
 import { countDownNum } from './CountDownNum';
 import {timeBar} from "./TimeBar" 
 import { AudioController } from './AudioController';
-
+import { BgAudio } from './BgAudio';
 
 
 const { ccclass, property } = _decorator;
@@ -26,6 +26,9 @@ export class GameControl extends Component {
 
     @property(Node)
     private audioController: Node | null = null;
+
+    @property(Node)
+    private bgAudioController: Node | null = null;
 
     @property(Node)
     private ball: Node | null = null;
@@ -83,7 +86,8 @@ export class GameControl extends Component {
     private timeBarNode: Node | null = null;
     public timeBarExecuted :boolean = false
     
-
+    audio = null;
+    BgAudio = null;
     
     onLoad() {
       //起始面板點擊
@@ -104,7 +108,8 @@ export class GameControl extends Component {
       }
         this.keepGoingUI.active = false
         PhysicsSystem2D.instance.enable = true;
-
+        this.audio = this.audioController.getComponent(AudioController)
+        this.BgAudio = this.bgAudioController.getComponent(BgAudio)
     }
    
     closeStartPanel(){
@@ -113,6 +118,7 @@ export class GameControl extends Component {
        this.showLevel()
     }
     showLevel(){
+      this.audio.play('popUp',1)
       this.levelUI.active = true
       const  userData = JSON.parse(sys.localStorage.getItem('profiles'));
        const levelLabel =  this.levelUI.getComponent(Label);
@@ -123,6 +129,14 @@ export class GameControl extends Component {
        }, 1000);
     }
     startPlay(){
+      this.audio.play('popUp',1)
+      setTimeout(() => {
+        this.audio.play('popUp',1)
+      }, 1000);
+      setTimeout(() => {
+        this.audio.play('popUp',1)
+      }, 2000);
+
       this.countDown.active = true  
       setTimeout(() => {
         const countDown = this.countDown.getComponent(countDownNum)
@@ -135,14 +149,15 @@ export class GameControl extends Component {
      
     }
     pauseGame(){
-        PhysicsSystem2D.instance.enable = false;
+      this.audio.play('pauseMusic',1)
+      PhysicsSystem2D.instance.enable = false;
         this.grayBg.active = true
         this.keepGoingUI.active = true
         //將node移置最上層
         this.keepGoingUI.setSiblingIndex(100);
     }
     keepGoing(){
-      PhysicsSystem2D.instance.enable = true;
+       PhysicsSystem2D.instance.enable = true;
        this.grayBg.active = false
        this.keepGoingUI.active = false
     }
@@ -158,7 +173,6 @@ export class GameControl extends Component {
         const borderMin =  -(canvasWidth/2 - paddleWidth/2)
         const borderMax =  canvasWidth/2 - paddleWidth/2
         const currentPosition = this.paddle.position;
-
         if (this.paddle) {
             this.paddle.setPosition(new Vec3(touchPos.x-canvasWidth/2-paddleWidth*3/4, currentPosition.y, currentPosition.z));
            if (currentPosition.x<borderMin) {
@@ -173,7 +187,6 @@ export class GameControl extends Component {
     update(deltaTime: number)  {
       const ball = this.ball.getComponent(Ball)
       const layout = this.BrickLayout.getComponent(BrickLayout)
-      const audioController = this.audioController.getComponent(AudioController)
       const panel = this.OverPanel.getComponent(OverPanel)
       const countDown = this.countDown.getComponent(countDownNum)
       const timebar = this.timeBarNode.getComponent(timeBar)
@@ -201,7 +214,8 @@ export class GameControl extends Component {
         this.countDown.active =false
         layout.generateRectArray(userData.level)
         ball.startPlay()
-        audioController.play('bg')
+        //背景音樂
+        this.BgAudio.play('bg')
         this.startProgressBar()
         this.countDownExecuted =true
       }

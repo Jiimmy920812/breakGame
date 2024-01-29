@@ -2931,6 +2931,22 @@
       "__uuid__": "ad559564-b98a-4e76-8797-cd1684cfd8e8",
       "__expectedType__": "cc.Prefab"
     },
+    "lv1": {
+      "__uuid__": "3f528100-ab5e-41ab-9d96-e75b4321aa30@f9941",
+      "__expectedType__": "cc.SpriteFrame"
+    },
+    "lv2": {
+      "__uuid__": "511a1545-e8f5-427c-b521-4b417fc55b93@f9941",
+      "__expectedType__": "cc.SpriteFrame"
+    },
+    "lv3": {
+      "__uuid__": "f3d89127-a45b-4f15-94c8-78240ac6c6d6@f9941",
+      "__expectedType__": "cc.SpriteFrame"
+    },
+    "lv_none": {
+      "__uuid__": "dbe0eed8-c8f2-499e-be36-49a0fb7e638c@f9941",
+      "__expectedType__": "cc.SpriteFrame"
+    },
     "_id": "11udpt2PZK2JpLXWt9NaPD"
   },
   {

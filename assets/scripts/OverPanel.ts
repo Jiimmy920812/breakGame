@@ -2,6 +2,7 @@ import { _decorator, Component, Node,SpriteFrame,Input,SpriteComponent,PhysicsSy
 import {timeBar} from "./TimeBar" 
 import { client } from "./util/tRPC_Server";
 import { AudioController } from './AudioController';
+import { BgAudio } from './BgAudio';
 
 const { ccclass, property } = _decorator;
 @ccclass('OverPanel')
@@ -25,6 +26,9 @@ export class OverPanel extends Component {
 
     @property(Node)
     private audioController: Node | null = null;
+
+    @property(Node)
+    private bgAudioController: Node | null = null;
   
     @property({type: SpriteFrame})
     victory_Bg: SpriteFrame|null = null;
@@ -60,10 +64,11 @@ export class OverPanel extends Component {
     if (this.checkBtn) {
       this.checkBtn.node.on(Input.EventType.TOUCH_START, this.checkList, this);   
           }
-
     }
     playResult(){
-        
+        const BgMusic = this.bgAudioController.getComponent(BgAudio)  
+        BgMusic.pause()
+
         this.grayBg.active = true  
         this.node.active = true
         const animate = this.node.getComponent(Animation);
