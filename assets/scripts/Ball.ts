@@ -1,5 +1,6 @@
 import { _decorator, Component, Collider2D,Contact2DType,PhysicsSystem2D,IPhysics2DContact,RigidBody2D,Vec2, director, Director,Node,Animation,misc,SpriteComponent,SpriteFrame} from 'cc';
 import {OverPanel} from './OverPanel'
+import { AudioController } from './AudioController';
 const { ccclass, property } = _decorator;
 
 @ccclass('Ball')
@@ -9,7 +10,8 @@ export class Ball extends Component {
     private launchAngle :number =61;
    
 
-
+    @property(Node)
+    private audioController: Node | null = null;
     
     @property(Node)
     private OverPanel: Node | null = null;
@@ -23,8 +25,10 @@ export class Ball extends Component {
     @property({type: SpriteFrame})
     lv2_box_0: SpriteFrame|null = null;
 
+    audio = null;
+
     start () {
-      
+      this.audio = this.audioController.getComponent(AudioController)
     }
     startPlay(){
         let RigidBody = this.node.getComponent(RigidBody2D)
@@ -56,7 +60,8 @@ export class Ball extends Component {
      
         if (otherCollider.tag === 1) {
             director.once(Director.EVENT_AFTER_PHYSICS,()=>{
-            const sprite =  otherCollider.node
+           this.audio.play('hitBrick',1) 
+           const sprite =  otherCollider.node
             
            const frame= sprite.getComponent(SpriteComponent)
            const frameName = frame.spriteFrame.name
@@ -87,6 +92,11 @@ export class Ball extends Component {
              }
            }) 
         }
+         //牆壁//板子
+        if (otherCollider.tag === 4||otherCollider.tag === 3) {
+            this.audio.play('hitBall',1) 
+         
+         }
         //地板
         if (otherCollider.tag === 2) {
             panel.result = false
