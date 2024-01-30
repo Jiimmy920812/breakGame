@@ -62,7 +62,6 @@ export class Ball extends Component {
             director.once(Director.EVENT_AFTER_PHYSICS,()=>{
            this.audio.play('hitBrick',1) 
            const sprite =  otherCollider.node
-            
            const frame= sprite.getComponent(SpriteComponent)
            const frameName = frame.spriteFrame.name
            
@@ -85,6 +84,7 @@ export class Ball extends Component {
                     });
                     // 播放动画
                     animate.play('explosion');
+                    animate.playOnLoad = false
                 } else {
                     // 如果未找到 Animation 组件，直接销毁节点
                     otherCollider.node.destroy();

@@ -52,7 +52,6 @@ export class AudioController extends Component {
       if (!name) return;
   
       const audioSource = this.node.addComponent(AudioSourceComponent);
-      console.log(audioSource,'audioSourcePlay');
       
       if (this.audiolists[name]) {
           audioSource.clip = this.audiolists[name];
@@ -67,29 +66,7 @@ export class AudioController extends Component {
        audioSource.play()
      }
 
-
-
-      // audioSource.play();
-  
-      // if (times && times > 1) {
-      //     // 循環播放
-      //     this.schedule(() => {
-      //         audioSource.stop();
-      //         audioSource.play();
-      //     }, audioSource.duration, times - 1);
-      // }
-  
-      // this.scheduleOnce(() => {
-      //     audioSource.destroy();
-      // }, audioSource.duration * times || audioSource.duration);
     }
     
-    pause(name?: string) {
-      if (!name) return;
-      const audioSource = this.node.getComponent(AudioSourceComponent);
-      console.log(audioSource.clip,'clip');
-      console.log(audioSource,'audioSource');
-      audioSource.pause()
-    }
  
 }

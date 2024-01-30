@@ -1,4 +1,4 @@
-import { _decorator, Component, Node, Button, Vec3 ,UITransform, PhysicsSystem2D,Input,sys,Label,SpriteFrame,SpriteComponent,AudioSource} from 'cc';
+import { _decorator, Component, Node, Button, Vec3 ,UITransform, PhysicsSystem2D,Input,sys,Label,SpriteFrame,SpriteComponent,Director} from 'cc';
 import { Ball } from './Ball'
 import {BrickLayout} from './BrickLayout'
 import {OverPanel} from './OverPanel'
@@ -56,8 +56,8 @@ export class GameControl extends Component {
     public startPanl_L1_title:string = '第一關遊戲說明'
     public startPanl_L1_text:string =
     `
-    透過左、右方向鍵控制底板擊落磚塊
-    最快擊落寶物磚塊者即可獲勝！！
+    透過拖曳左、右方向移動跳板，在時間
+    內拯救貓咪即可獲勝！！
     `
     
     @property({type: SpriteFrame})
@@ -106,6 +106,8 @@ export class GameControl extends Component {
         this.keepGoingBtn.node.on('click', this.keepGoing, this);
         
       }
+      
+        this.pauseBtn.interactable  = false
         this.keepGoingUI.active = false
         PhysicsSystem2D.instance.enable = true;
         this.audio = this.audioController.getComponent(AudioController)
@@ -149,6 +151,7 @@ export class GameControl extends Component {
      
     }
     pauseGame(){
+      if (!this.pauseBtn.interactable) return
       this.audio.play('pauseMusic',1)
       PhysicsSystem2D.instance.enable = false;
         this.grayBg.active = true
@@ -168,13 +171,15 @@ export class GameControl extends Component {
         const transform = this.getComponent(UITransform);
         const canvasWidth = transform.width
         const paddleWidth = this.paddle.getComponent(UITransform).width
-      
-        const touchPos = e.getLocation();
+
+
+        const touchPos = e.getUILocation();
+        
         const borderMin =  -(canvasWidth/2 - paddleWidth/2)
         const borderMax =  canvasWidth/2 - paddleWidth/2
         const currentPosition = this.paddle.position;
         if (this.paddle) {
-            this.paddle.setPosition(new Vec3(touchPos.x-canvasWidth/2-paddleWidth*3/4, currentPosition.y, currentPosition.z));
+            this.paddle.setPosition(new Vec3(touchPos.x-canvasWidth/2, currentPosition.y, currentPosition.z));
            if (currentPosition.x<borderMin) {
             this.paddle.setPosition(new Vec3(borderMin, currentPosition.y, currentPosition.z));
            }if (currentPosition.x>borderMax) {
@@ -210,6 +215,7 @@ export class GameControl extends Component {
 
 
       if (countDown.countEnd && !this.countDownExecuted) {
+        this.pauseBtn.interactable  = true
         this.grayBg.active = false
         this.countDown.active =false
         layout.generateRectArray(userData.level)

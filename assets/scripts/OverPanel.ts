@@ -22,6 +22,10 @@ export class OverPanel extends Component {
     @property(Button)
     private checkBtn: Button | null = null;
 
+    
+    @property(Button)
+    private pauseBtn: Button | null = null;
+
     public result:boolean = false;
 
     @property(Node)
@@ -66,9 +70,10 @@ export class OverPanel extends Component {
           }
     }
     playResult(){
+        
         const BgMusic = this.bgAudioController.getComponent(BgAudio)  
         BgMusic.pause()
-
+        this.pauseBtn.interactable  = false
         this.grayBg.active = true  
         this.node.active = true
         const animate = this.node.getComponent(Animation);
@@ -110,7 +115,6 @@ export class OverPanel extends Component {
        
         //關閉背景音樂
         const audioController = this.audioController.getComponent(AudioController)
-        audioController.pause('bg')
         //設定結果面板
         if (this.result) {
           //勝利音樂

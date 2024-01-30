@@ -288,7 +288,7 @@
     "__prefab": null,
     "_contentSize": {
       "__type__": "cc.Size",
-      "width": 375,
+      "width": 377,
       "height": 812
     },
     "_anchorPoint": {
@@ -349,7 +349,7 @@
     "__prefab": null,
     "_alignFlags": 8,
     "_target": null,
-    "_left": 0,
+    "_left": -1,
     "_right": 0,
     "_top": 0,
     "_bottom": 0,
@@ -1072,6 +1072,8 @@
     },
     "_enabled": true,
     "__prefab": null,
+    "red_mask": null,
+    "time_endBar": null,
     "_id": "3aE+RdcvJOjYXJKOT4WM9t"
   },
   {

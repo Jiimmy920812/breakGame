@@ -1,4 +1,4 @@
-import { _decorator, Component,ProgressBar,Label ,PhysicsSystem2D} from 'cc';
+import { _decorator,Node, Component,ProgressBar,Label ,PhysicsSystem2D, SpriteComponent,SpriteFrame} from 'cc';
 const { ccclass, property } = _decorator;
 
 
@@ -11,9 +11,16 @@ export class timeBar extends Component {
     public isCounting: boolean = false;
     public countEnd : boolean = false;
 
+    @property(Node)
+    private red_mask: Node | null = null;
+
+    @property({type: SpriteFrame})
+    time_endBar: SpriteFrame|null = null;
+
     start() {
      this.isCounting =false
      this.countEnd = false
+     this.red_mask.active = false
     }
 
     update(deltaTime: number) {
@@ -31,14 +38,16 @@ export class timeBar extends Component {
                 this.countEnd = true
             }
             this.getComponent(ProgressBar).progress = progress;
+           
             let countNum = this.CountDownSec - Math.floor(this.elapsedMilliseconds)
-            
             if (countNum===60) {
                 countDownStr = `01:00`
             }else if (countNum<60&&countNum>=10) {
                 countDownStr =`00:${countNum}`
             }else if (countNum<10) {
+                this.node.getChildByName('Bar').getComponent(SpriteComponent).spriteFrame = this.time_endBar
                 countDownStr = `00:0${countNum}`
+                this.red_mask.active = true
             }
             this.node.getChildByName('countText').getComponent(Label).string = countDownStr
         }
