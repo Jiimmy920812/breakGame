@@ -88,6 +88,9 @@ export class GameControl extends Component {
     
     audio = null;
     BgAudio = null;
+
+    showLevel_screen = false
+    startPlay_screen = false
     
     onLoad() {
       //起始面板點擊
@@ -112,38 +115,51 @@ export class GameControl extends Component {
         PhysicsSystem2D.instance.enable = true;
         this.audio = this.audioController.getComponent(AudioController)
         this.BgAudio = this.bgAudioController.getComponent(BgAudio)
+        this.showLevel_screen = false
+        this.startPlay_screen = false
     }
    
     closeStartPanel(){
        this.startPanel.active = false
        this.touchStartBg.active = false
+       this.showLevel_screen = true
        this.showLevel()
     }
     showLevel(){
-      this.audio.play('popUp',1)
-      this.levelUI.active = true
-      const  userData = JSON.parse(sys.localStorage.getItem('profiles'));
-       const levelLabel =  this.levelUI.getComponent(Label);
-       levelLabel.string = `LEVEL${userData.level}`
-       setTimeout(() => {
-        this.levelUI.active = false
-        this.startPlay()
-       }, 1000);
+      if (!this.showLevel_screen) return;
+
+      this.audio.play('popUp', 1);
+      this.levelUI.active = true;
+    
+      const userData = JSON.parse(sys.localStorage.getItem('profiles'));
+      const levelLabel = this.levelUI.getComponent(Label);
+      levelLabel.string = `LEVEL ${userData.level}`;
+    
+      setTimeout(() => {
+        this.startPlay_screen = true;
+        this.startPlay();
+        this.levelUI.active = false;
+      }, 1000);
     }
     startPlay(){
-      this.audio.play('popUp',1)
-      setTimeout(() => {
-        this.audio.play('popUp',1)
-      }, 1000);
-      setTimeout(() => {
-        this.audio.play('popUp',1)
-      }, 2000);
+      if (!this.startPlay_screen) return;
+      if (this.audio) {
+        this.audio.play('popUp', 1);
+        setTimeout(() => {
+          this.audio.play('popUp', 1);
+        }, 1000);
+        setTimeout(() => {
+          this.audio.play('popUp', 1);
+        }, 2000);
 
-      this.countDown.active = true  
-      setTimeout(() => {
-        const countDown = this.countDown.getComponent(countDownNum)
-        countDown.isCounting = true
-       }, 50); 
+        this.countDown.active = true;
+
+        setTimeout(() => {
+          const countDown = this.countDown.getComponent(countDownNum);
+          countDown.isCounting = true;
+          this.levelUI.active = false; // Move this line inside the setTimeout callback
+        }, 50);
+       }
       }
     startProgressBar(){
       const timebar = this.timeBarNode.getComponent(timeBar)
