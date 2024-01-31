@@ -57,14 +57,25 @@ export class OverPanel extends Component {
 
     @property({type: SpriteFrame})
     fail_2: SpriteFrame|null = null;
-
+    
+    clickInProgress = false
 
     start() {
       //結束面板初始化
-    this.node.active = false
-    if (this.gameBtn) {
-    this.gameBtn.node.on(Input.EventType.TOUCH_START, this.closeOverPanel, this);   
-        }
+      this.node.active = false
+      if (this.gameBtn) {
+        this.gameBtn.node.on(Input.EventType.TOUCH_START, () => {
+            if (this.clickInProgress) {
+                return;
+            }
+            this.clickInProgress = true;
+            this.closeOverPanel();
+            setTimeout(() => {
+                this.clickInProgress = false;
+            }, 1000); 
+        }, this);
+    }
+      
     if (this.checkBtn) {
       this.checkBtn.node.on(Input.EventType.TOUCH_START, this.checkList, this);   
           }
@@ -157,7 +168,6 @@ export class OverPanel extends Component {
       }
       
       checkList(){
-        console.log('checkList');
         setTimeout(() => {
           Director.instance.loadScene('rankList');
       }, 1000)

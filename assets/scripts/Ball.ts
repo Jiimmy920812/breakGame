@@ -7,7 +7,7 @@ const { ccclass, property } = _decorator;
 export class Ball extends Component {
 
     private speed :number =15;
-    private launchAngle :number =61;
+    private launchAngle :number =60;
    
 
     @property(Node)
@@ -26,6 +26,9 @@ export class Ball extends Component {
     lv2_box_0: SpriteFrame|null = null;
 
     audio = null;
+    newVelocity = null
+    samePositionArr = []
+
 
     start () {
       this.audio = this.audioController.getComponent(AudioController)
@@ -37,12 +40,12 @@ export class Ball extends Component {
         // 将角度转换为弧度
         let launchAngleRadians = misc.degreesToRadians(this.launchAngle);
 
-        let newVelocity = new Vec2(this.speed * Math.cos(launchAngleRadians), this.speed * Math.sin(launchAngleRadians));
+        this.newVelocity = new Vec2(this.speed * Math.cos(launchAngleRadians), this.speed * Math.sin(launchAngleRadians));
 
         // 设置 RigidBody 的角度
         RigidBody.node.angle = this.launchAngle;
         // 设置 RigidBody 的线性速度
-        RigidBody.linearVelocity = newVelocity;
+        RigidBody.linearVelocity = this.newVelocity;
         
         // 注册单个碰撞体的回调函数
         let collider = this.getComponent(Collider2D);
@@ -58,6 +61,7 @@ export class Ball extends Component {
         const panel = this.OverPanel.getComponent(OverPanel)
         //一般磚
      
+
         if (otherCollider.tag === 1) {
             director.once(Director.EVENT_AFTER_PHYSICS,()=>{
            this.audio.play('hitBrick',1) 

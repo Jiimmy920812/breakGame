@@ -13,6 +13,8 @@ export class list extends Component {
 
     scoreBoardList = null
     userData = null
+
+    clickInProgress = false
     
     async start() {
         this.userData= JSON.parse(sys.localStorage.getItem('profiles'));  
@@ -21,12 +23,19 @@ export class list extends Component {
         const personObj =  this.scoreBoardList.list.find((obj)=>obj.name===this.userData.name)
         const personIndex =  this.scoreBoardList.list.findIndex((obj)=>obj.name===this.userData.name)
 
-       
-        
-
         if (this.gameBtn) {
-            this.gameBtn.node.on(Input.EventType.TOUCH_START, this.closeList, this);   
+            this.gameBtn.node.on(Input.EventType.TOUCH_START, () => {
+                if (this.clickInProgress) {
+                    return;
                 }
+                this.clickInProgress = true;
+                this.closeList();
+                setTimeout(() => {
+                    this.clickInProgress = false;
+                }, 1000); 
+            }, this);
+        }
+        
        
         const parentNode = new Node()
         this.node.addChild(parentNode)

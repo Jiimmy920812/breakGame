@@ -2734,7 +2734,7 @@
     "_lpos": {
       "__type__": "cc.Vec3",
       "x": 0,
-      "y": 110,
+      "y": 0,
       "z": 0
     },
     "_lrot": {
@@ -2828,7 +2828,7 @@
     "_contentSize": {
       "__type__": "cc.Size",
       "width": 240,
-      "height": 250
+      "height": 235
     },
     "_anchorPoint": {
       "__type__": "cc.Vec2",
@@ -3249,7 +3249,7 @@
     "__prefab": null,
     "clickEvents": [],
     "_interactable": true,
-    "_transition": 2,
+    "_transition": 3,
     "_normalColor": {
       "__type__": "cc.Color",
       "r": 214,
@@ -3295,7 +3295,7 @@
       "__expectedType__": "cc.SpriteFrame"
     },
     "_duration": 0.1,
-    "_zoomScale": 1.2,
+    "_zoomScale": 1.1,
     "_target": {
       "__id__": 95
     },

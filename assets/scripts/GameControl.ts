@@ -88,7 +88,8 @@ export class GameControl extends Component {
     
     audio = null;
     BgAudio = null;
-
+    
+    clickInProgress = false
     showLevel_screen = false
     startPlay_screen = false
     
@@ -115,6 +116,8 @@ export class GameControl extends Component {
         PhysicsSystem2D.instance.enable = true;
         this.audio = this.audioController.getComponent(AudioController)
         this.BgAudio = this.bgAudioController.getComponent(BgAudio)
+        
+        this.clickInProgress
         this.showLevel_screen = false
         this.startPlay_screen = false
     }
@@ -127,14 +130,11 @@ export class GameControl extends Component {
     }
     showLevel(){
       if (!this.showLevel_screen) return;
-
       this.audio.play('popUp', 1);
       this.levelUI.active = true;
-    
       const userData = JSON.parse(sys.localStorage.getItem('profiles'));
       const levelLabel = this.levelUI.getComponent(Label);
       levelLabel.string = `LEVEL ${userData.level}`;
-    
       setTimeout(() => {
         this.startPlay_screen = true;
         this.startPlay();
@@ -151,9 +151,7 @@ export class GameControl extends Component {
         setTimeout(() => {
           this.audio.play('popUp', 1);
         }, 2000);
-
         this.countDown.active = true;
-
         setTimeout(() => {
           const countDown = this.countDown.getComponent(countDownNum);
           countDown.isCounting = true;
