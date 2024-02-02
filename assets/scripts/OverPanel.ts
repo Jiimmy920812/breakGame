@@ -65,14 +65,7 @@ export class OverPanel extends Component {
       this.node.active = false
       if (this.gameBtn) {
         this.gameBtn.node.on(Input.EventType.TOUCH_START, () => {
-            if (this.clickInProgress) {
-                return;
-            }
-            this.clickInProgress = true;
-            this.closeOverPanel();
-            setTimeout(() => {
-                this.clickInProgress = false;
-            }, 1000); 
+            this.handleGameBtnClick();
         }, this);
     }
       
@@ -172,11 +165,23 @@ export class OverPanel extends Component {
           Director.instance.loadScene('rankList');
       }, 1000)
       }
-      closeOverPanel(){
-        setTimeout(() => {
-          Director.instance.loadScene('game');
-      }, 1000)
+        handleGameBtnClick() {
+          if (this.clickInProgress) {
+              return;
+          }
+      
+          this.clickInProgress = true;
+          setTimeout(() => {
+              this.clickInProgress = false;
+          }, 1000);
+      
+          this.closeOverPanel();
       }
+        closeOverPanel() {
+            setTimeout(() => {
+                Director.instance.loadScene('game');
+            }, 1000);
+        }
     update(deltaTime: number) {
     }
 }

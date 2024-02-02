@@ -1,4 +1,4 @@
-import { _decorator, Component, AudioSource, AudioClip, AudioSourceComponent } from 'cc';
+import { _decorator, Component, AudioSource, AudioClip, AudioSourceComponent,Slider } from 'cc';
 const { ccclass, property } = _decorator;
 
 @ccclass("AudioController")
@@ -32,11 +32,19 @@ export class AudioController extends Component {
     
     @property(AudioClip)
     public paddle: AudioClip = null!; 
+
+    @property(Slider)
+    slider: Slider | null = null;
+
     
+    music = null
     audiolists = null
+    volume = null
 
     onLoad () {
-        this.audiolists = {
+      this.slider!.node.on('slide', this.controlVolume, this); 
+      
+      this.audiolists = {
             bg: this.bg,
             countDown: this.countDown,
             hitBall: this.hitBall,
@@ -48,25 +56,32 @@ export class AudioController extends Component {
         };
     }
 
+    controlVolume(slider: Slider){
+      this.volume = slider.progress
+      console.log( this.volume,'1111');
+      
+    }
+
     play(name: string, times?: number) {
       if (!name) return;
-  
-      const audioSource = this.node.addComponent(AudioSourceComponent);
+      
+      this.music = this.node.addComponent(AudioSourceComponent);
+      
       
       if (this.audiolists[name]) {
-          audioSource.clip = this.audiolists[name];
+        this.music.clip = this.audiolists[name];
+       if (this.volume!==null)  this.music._volume = this.volume;
       } else {
           console.error(`未找到名為 ${name} 的音頻片段。`);
           return;
       }
   
      if (times!==null) {
-       audioSource.playOneShot(audioSource.clip, times);
+      this.music.playOneShot(this.music.clip, times);
      }else{
-       audioSource.play()
+      this.music.play()
      }
 
     }
     
- 
 }

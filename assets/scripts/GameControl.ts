@@ -14,6 +14,8 @@ const { ccclass, property } = _decorator;
 export class GameControl extends Component {
   
 
+    @property(Button)
+    private settingBtn: Button | null = null;
 
     @property(Button)
     private pauseBtn: Button | null = null;
@@ -49,6 +51,9 @@ export class GameControl extends Component {
     
     @property(Node)
     private startPanel: Node | null = null;
+
+    @property(Node)
+    private settingPanel: Node | null = null;
 
     @property({type: SpriteFrame})
     startPanl_L1_info: SpriteFrame|null = null;
@@ -101,6 +106,10 @@ export class GameControl extends Component {
         //手指操控
         this.node.on(Input.EventType.TOUCH_MOVE,this.movePaddle,this)
        
+        //設定Btn
+        if (this.settingBtn) {
+          this.settingBtn.node.on('click', this.settingPanelOpen, this);
+        }
         //暫停Btn
         if (this.pauseBtn) {
             this.pauseBtn.node.on('click', this.pauseGame, this);
@@ -173,6 +182,15 @@ export class GameControl extends Component {
         //將node移置最上層
         this.keepGoingUI.setSiblingIndex(100);
     }
+
+    settingPanelOpen(){
+      this.settingPanel.active =true
+    }
+
+    settingPanelClose(){
+      this.settingPanel.active =false
+    }
+
     keepGoing(){
        PhysicsSystem2D.instance.enable = true;
        this.grayBg.active = false
