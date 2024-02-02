@@ -8,6 +8,9 @@ export class Ball extends Component {
 
     private speed :number =15;
     private launchAngle :number =60;
+    private minLaunchAngle: number = 60;
+    private maxLaunchAngle: number = 120;
+
    
 
     @property(Node)
@@ -30,22 +33,38 @@ export class Ball extends Component {
     samePositionArr = []
 
 
+    
+
     start () {
       this.audio = this.audioController.getComponent(AudioController)
     }
     startPlay(){
+       
+
         let RigidBody = this.node.getComponent(RigidBody2D)
-        // let newVelocity = new Vec2(this.speed, this.speed); 
+
+        // 生成一个介于minLaunchAngle和maxLaunchAngle之间的随机角度
+        let randomLaunchAngle = Math.random() * (this.maxLaunchAngle - this.minLaunchAngle) + this.minLaunchAngle;
 
         // 将角度转换为弧度
-        let launchAngleRadians = misc.degreesToRadians(this.launchAngle);
+        let launchAngleRadians = misc.degreesToRadians(randomLaunchAngle);
 
+        // 计算新的速度向量
         this.newVelocity = new Vec2(this.speed * Math.cos(launchAngleRadians), this.speed * Math.sin(launchAngleRadians));
 
+        // 进行反弹角度的调整
+        if (Math.abs(this.newVelocity.x) < 0.01 || Math.abs(this.newVelocity.y) < 0.01) {
+            // 使用 Vec2.normalize() 確保速度向量的長度是一致的
+            this.newVelocity.normalizeSelf();
+        }
+
         // 设置 RigidBody 的角度
-        RigidBody.node.angle = this.launchAngle;
+        RigidBody.node.angle = randomLaunchAngle;
+
         // 设置 RigidBody 的线性速度
         RigidBody.linearVelocity = this.newVelocity;
+
+   
         
         // 注册单个碰撞体的回调函数
         let collider = this.getComponent(Collider2D);
@@ -80,7 +99,10 @@ export class Ball extends Component {
             return
            }else{
                 const animate =  sprite.getComponent(Animation)
-                if (animate) {
+                if (animate._hasBeenPlayed) {
+                    otherCollider.node.destroy();
+                    return
+                }else if(animate){
                     // 添加动画播放完成的回调
                     animate.on(Animation.EventType.FINISHED, () => {
                         // 在动画完成后执行销毁操作
@@ -88,8 +110,9 @@ export class Ball extends Component {
                     });
                     // 播放动画
                     animate.play('explosion');
-                    animate.playOnLoad = false
-                } else {
+                    //動畫重複撥放
+                }
+                else {
                     // 如果未找到 Animation 组件，直接销毁节点
                     otherCollider.node.destroy();
                 }

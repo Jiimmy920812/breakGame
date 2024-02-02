@@ -17,14 +17,26 @@ export class OverPanel extends Component {
    
     profiles = null 
 
+    clickInProgress = false
+
     async start(){
       DataControlPanel.init()
       this.profiles = await client.users.generateAccount.query();
 
     }
     onLoad() {
-        this.btn_ok.node.on(Button.EventType.CLICK, this.postInfo, this);
-       
+        if (this.btn_ok) {
+          this.btn_ok.node.on(Input.EventType.TOUCH_START, () => {
+              if (this.clickInProgress) {
+                  return;
+              }
+              this.clickInProgress = true;
+              this.postInfo();
+              setTimeout(() => {
+                  this.clickInProgress = false;
+              }, 1000); 
+          }, this);
+      }
     }
 
    async postInfo(){
