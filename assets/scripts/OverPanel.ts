@@ -63,11 +63,19 @@ export class OverPanel extends Component {
     start() {
       //結束面板初始化
       this.node.active = false
-      if (this.gameBtn) {
-        this.gameBtn.node.on(Input.EventType.TOUCH_START, () => {
-            this.handleGameBtnClick();
-        }, this);
-    }
+ 
+    if (this.gameBtn) {
+      this.gameBtn.node.on(Input.EventType.TOUCH_START, () => {
+          if (this.clickInProgress) {
+              return;
+          }
+          this.clickInProgress = true;
+          this.closeOverPanel();
+          setTimeout(() => {
+              this.clickInProgress = false;
+          }, 1000); 
+      }, this);
+  }
       
     if (this.checkBtn) {
       this.checkBtn.node.on(Input.EventType.TOUCH_START, this.checkList, this);   
@@ -165,23 +173,11 @@ export class OverPanel extends Component {
           Director.instance.loadScene('rankList');
       }, 1000)
       }
-        handleGameBtnClick() {
-          if (this.clickInProgress) {
-              return;
-          }
-      
-          this.clickInProgress = true;
+      closeOverPanel() {
           setTimeout(() => {
-              this.clickInProgress = false;
+              Director.instance.loadScene('game');
           }, 1000);
-      
-          this.closeOverPanel();
       }
-        closeOverPanel() {
-            setTimeout(() => {
-                Director.instance.loadScene('game');
-            }, 1000);
-        }
     update(deltaTime: number) {
     }
 }
