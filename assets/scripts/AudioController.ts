@@ -1,4 +1,4 @@
-import { _decorator, Component, AudioSource, AudioClip, AudioSourceComponent,Slider } from 'cc';
+import { _decorator, Component, AudioSource, AudioClip, AudioSourceComponent,Slider,sys,SpriteComponent,SpriteFrame } from 'cc';
 const { ccclass, property } = _decorator;
 
 @ccclass("AudioController")
@@ -36,14 +36,22 @@ export class AudioController extends Component {
     @property(Slider)
     slider: Slider | null = null;
 
+    @property({type: SpriteFrame})
+    Slider_on_bg: SpriteFrame|null = null;
+
+    @property({type: SpriteFrame})
+      Slider_off_bg: SpriteFrame|null = null;  
+
+
+    public volume:number=1
     
     music = null
     audiolists = null
-    volume = null
+    userData=null
 
     onLoad () {
+      this.userData = JSON.parse(sys.localStorage.getItem('profiles'));  
       this.slider!.node.on('slide', this.controlVolume, this); 
-      
       this.audiolists = {
             bg: this.bg,
             countDown: this.countDown,
@@ -54,23 +62,52 @@ export class AudioController extends Component {
             popUp: this.popUp,
             winner: this.winner,
         };
+        if (this.userData.Effect_volume===undefined ) {
+          this.userData.Effect_volume = this.volume
+          this.slider.getComponent(Slider).progress = this.volume
+        }else{
+          this.slider.getComponent(Slider).progress = this.userData.Effect_volume
+        }
+
+
+        const SliderBgUI =  this.slider.getComponent(SpriteComponent) 
+        if (SliderBgUI) {
+          if (this.userData.Effect_volume>=0.5) {
+            SliderBgUI.spriteFrame = this.Slider_on_bg
+          }else if(this.userData.Effect_volume<0.5){
+            SliderBgUI.spriteFrame = this.Slider_off_bg
+          }
+        }
+  
+
+        sys.localStorage.setItem('profiles', JSON.stringify(this.userData));
     }
 
     controlVolume(slider: Slider){
+      const userData =  JSON.parse(sys.localStorage.getItem('profiles')); 
       this.volume = slider.progress
-      console.log( this.volume,'1111');
-      
+      userData.Effect_volume = slider.progress
+
+      const SliderBgUI =  this.slider.getComponent(SpriteComponent) 
+      if (SliderBgUI) {
+        if (userData.Effect_volume>0.5) {
+          this.slider.getComponent(SpriteComponent).spriteFrame = this.Slider_on_bg
+        }else{
+          this.slider.getComponent(SpriteComponent).spriteFrame = this.Slider_off_bg
+        }
+      }
+
+      sys.localStorage.setItem('profiles', JSON.stringify(userData));
     }
 
     play(name: string, times?: number) {
+      const userData =  JSON.parse(sys.localStorage.getItem('profiles')); 
       if (!name) return;
-      
       this.music = this.node.addComponent(AudioSourceComponent);
-      
       
       if (this.audiolists[name]) {
         this.music.clip = this.audiolists[name];
-       if (this.volume!==null)  this.music._volume = this.volume;
+       if (this.volume!==null)  this.music._volume = userData.Effect_volume;
       } else {
           console.error(`未找到名為 ${name} 的音頻片段。`);
           return;
