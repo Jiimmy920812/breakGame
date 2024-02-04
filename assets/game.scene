@@ -3295,7 +3295,10 @@
       "b": 255,
       "a": 255
     },
-    "_spriteFrame": null,
+    "_spriteFrame": {
+      "__uuid__": "be38bfa1-419e-4c63-a1ce-1d706deec8ea@f9941",
+      "__expectedType__": "cc.SpriteFrame"
+    },
     "_type": 1,
     "_fillType": 0,
     "_sizeMode": 0,
@@ -4163,7 +4166,7 @@
     "_prefab": null,
     "_lpos": {
       "__type__": "cc.Vec3",
-      "x": -20,
+      "x": -22,
       "y": 0,
       "z": 0
     },
@@ -4482,7 +4485,10 @@
       "b": 255,
       "a": 255
     },
-    "_spriteFrame": null,
+    "_spriteFrame": {
+      "__uuid__": "be38bfa1-419e-4c63-a1ce-1d706deec8ea@f9941",
+      "__expectedType__": "cc.SpriteFrame"
+    },
     "_type": 1,
     "_fillType": 0,
     "_sizeMode": 0,

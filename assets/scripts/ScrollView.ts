@@ -58,8 +58,6 @@ export class List extends Component {
              
 
 
-             console.log(this.otherPrefab,'perhabs');
-             console.log(rankNumBg.spriteFrame  ,'rankNumBg');
              
              
              

@@ -60,7 +60,6 @@ export class list extends Component {
            parentNode.addChild(listNode);
     }
     closeList(){
-        console.log('listGame');
         setTimeout(() => {
           Director.instance.loadScene('game');
       }, 1000)
